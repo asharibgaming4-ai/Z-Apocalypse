@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-APOCALYPSE</title>
+    <!-- Fonts matching the original style -->
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            background-image: url('zombie_bg.png'); 
+            background-size: cover;
+            background-position: center;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .menu-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Game Title matching Button Style (Exact Gradient & Cleaner Shadow) */
+        .game-title {
+            font-family: 'Creepster', cursive;
+            font-size: 8rem;
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(139, 0, 0, 0.8);
+            animation: titlePulse 3s infinite ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1);
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(139, 0, 0, 0.8);
+            }
+            50% {
+                transform: scale(1.03);
+                filter: brightness(1.2);
+                text-shadow: 4px 4px 8px rgba(0,0,0,0.7), 0 0 20px rgba(255, 0, 0, 0.6);
+            }
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            width: 320px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            height: 60px;
+            background: rgba(10, 0, 0, 0.7);
+            border: 1px solid #333;
+            color: #888;
+            font-family: 'Creepster', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            overflow: visible;
+            margin-bottom: 5px;
+        }
+
+        /* The animated corners */
+        .menu-btn::before, .menu-btn::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #8b0000;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .menu-btn::before {
+            top: -2px; left: -2px;
+            border-right: none; border-bottom: none;
+        }
+
+        .menu-btn::after {
+            bottom: -2px; right: -2px;
+            border-left: none; border-top: none;
+        }
+
+        .menu-btn:hover {
+            color: #ff0000;
+            background: rgba(20, 0, 0, 0.9);
+            border-color: #500;
+            letter-spacing: 8px;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+        }
+
+        .menu-btn:hover::before, .menu-btn:hover::after {
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            border-image: linear-gradient(45deg, #ff0000, #00ff00) 1;
+            filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8)) drop-shadow(0 0 8px rgba(0, 255, 0, 0.5));
+        }
+
+        .menu-btn span {
+            position: relative;
+            z-index: 5;
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .menu-btn.disabled {
+            background: rgba(5, 5, 5, 0.8);
+            border-color: #222;
+            cursor: not-allowed;
+            letter-spacing: 4px;
+        }
+
+        .menu-btn.disabled span {
+            background: #555;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-btn.disabled::after {
+            content: '🔒';
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.4rem;
+            color: #ccff00; /* Toxic yellow-green lock */
+            filter: drop-shadow(0 0 5px #ccff00);
+        }
+
+        .menu-btn.disabled::before, .menu-btn.disabled::after {
+            border-color: #222;
+        }
+
+        .menu-btn.disabled:hover {
+            letter-spacing: 4px;
+            text-shadow: none;
+        }
+
+        .menu-btn.disabled:hover::before, .menu-btn.disabled:hover::after {
+            width: 15px;
+            height: 15px;
+            filter: none;
+        }
+
+        .status-message {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px #000;
+            min-height: 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: hidden;
+        }
+
+        .modal::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000 url('signup_bg.png') no-repeat center center / cover;
+            filter: blur(5px) brightness(0.6);
+            z-index: -1;
+            transform: scale(1.1); /* Prevents white edges from blur */
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.98);
+            padding: 20px 25px;
+            border: 1px solid #333;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 1);
+            width: 400px;
+            text-align: center;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        /* Modal corner brackets */
+        .modal-content::before, .modal-content::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #ff0000, #00ff00) 1;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .modal-content::before {
+            top: -3px; left: -3px;
+            border-right: none; border-bottom: none;
+        }
+
+        .modal-content::after {
+            bottom: -3px; right: -3px;
+            border-left: none; border-top: none;
+        }
+
+        /* Modal hover effect */
+        .modal-content:hover::before, .modal-content:hover::after {
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8)) drop-shadow(0 0 15px rgba(0, 255, 0, 0.6));
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 12px; top: 5px;
+            color: #8b0000; font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .modal-content h2 {
+            font-family: 'Creepster', cursive;
+            font-size: 2.2rem;
+            /* Exact gradient from main title */
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 15px rgba(255, 0, 0, 0.6), 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .modal-subtitle {
+            color: #888;
+            font-family: 'Creepster', cursive;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #b8860b;
+            font-family: 'Creepster', cursive;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #444;
+            padding: 10px;
+            color: #ffffff;
+            font-family: 'Creepster', cursive; /* Horror font like the title */
+            outline: none;
+            font-size: 1.2rem; /* Slightly larger for horror font readability */
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.05);
+        }
+
+        .input-group input:hover {
+            border-color: #666;
+            background: rgba(30, 0, 0, 0.9);
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
+        }
+
+        .input-group input:focus {
+            border-color: #00ff00;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3), inset 0 0 5px rgba(0, 255, 0, 0.1);
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .input-group {
+            flex: 1;
+        }
+
+        .terms {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .submit-btn {
+            width: 100% !important;
+            margin-top: 5px;
+            background: linear-gradient(to bottom, #8b0000 0%, #440000 100%) !important;
+            border: 1px solid #330000 !important;
+            font-size: 1.5rem !important; /* Smaller button font */
+            padding: 8px 0 !important;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            letter-spacing: 4px !important; /* Keep letter spacing stable */
+        }
+
+        .submit-btn:hover span {
+            transform: scale(1.2);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .submit-btn span {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        /* Password Visibility Toggle Styles */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            padding-right: 35px !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #b8860b;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s, transform 0.2s, opacity 0.3s;
+            z-index: 5;
+            opacity: 0.7;
+        }
+
+        .toggle-password:hover {
+            color: #ff0000;
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .toggle-password svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="menu-container">
+        <h1 class="game-title">Z-APOCALYPSE</h1>
+        <div class="button-group">
+            <button id="btn-play" class="menu-btn disabled" disabled><span>PLAY</span></button>
+            <button id="btn-signup" class="menu-btn"><span>SIGNUP</span></button>
+            <button id="btn-login" class="menu-btn"><span>LOGIN</span></button>
+        </div>
+        <div class="status-message" id="status-message">Ready to survive?</div>
+    </div>
+
+    <!-- Auth Modals -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2 id="modal-title"><span>LOGIN</span></h2>
+            <div class="modal-subtitle">Join the resistance. Register now.</div>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="username">CODENAME / USERNAME</label>
+                    <input type="text" id="username" required placeholder="e.g. Survivor_X">
+                </div>
+                
+                <div id="signup-fields" style="display: none;">
+                    <div class="input-group">
+                        <label for="email">SURVIVOR EMAIL</label>
+                        <input type="email" id="email" placeholder="e.g. name@email.com">
+                    </div>
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="password">CREATE PASSWORD</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" required placeholder="8+ chars">
+                                <span class="toggle-password" onclick="toggleVisibility('password')">
+                                    <svg class="eye-icon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="confirm-password">CONFIRM</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="confirm-password" placeholder="Repeat">
+                                <span class="toggle-password" onclick="toggleVisibility('confirm-password')">
+                                    <svg class="eye-icon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I ACCEPT THE TERMS OF SURVIVAL.</label>
+                    </div>
+                </div>
+
+                <div id="login-fields">
+                    <div class="input-group">
+                        <label for="login-password">PASSWORD</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="login-password" placeholder="Enter password">
+                            <span class="toggle-password" onclick="toggleVisibility('login-password')">
+                                <svg class="eye-icon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="menu-btn submit-btn"><span>JOIN THE Z-APOCALYPSE</span></button>
+            </form>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+    const EYE_SVG = '<svg class="eye-icon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const EYE_OFF_SVG = '<svg class="eye-icon" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
+
+    function toggleVisibility(id) {
+        const input = document.getElementById(id);
+        const iconContainer = input.nextElementSibling;
+        if (input.type === "password") {
+            input.type = "text";
+            iconContainer.innerHTML = EYE_OFF_SVG;
+        } else {
+            input.type = "password";
+            iconContainer.innerHTML = EYE_SVG;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const playBtn = document.getElementById('btn-play');
+        const loginBtn = document.getElementById('btn-login');
+        const signupBtn = document.getElementById('btn-signup');
+        const statusMsg = document.getElementById('status-message');
+        const modal = document.getElementById('auth-modal');
+        const closeModal = document.getElementById('close-modal');
+        const authForm = document.getElementById('auth-form');
+        const modalTitle = document.getElementById('modal-title').querySelector('span');
+        const signupFields = document.getElementById('signup-fields');
+        const loginFields = document.getElementById('login-fields');
+        const submitBtnText = document.getElementById('submit-btn').querySelector('span');
+
+        let isUserLoggedIn = false;
+        let currentMode = 'login';
+
+        const openModal = (mode) => {
+            currentMode = mode;
+            statusMsg.textContent = ''; // Purana message clear karne ke liye
+            modalTitle.textContent = mode === 'login' ? 'LOGIN' : 'PLAYER REGISTRATION';
+            if (mode === 'signup') {
+                signupFields.style.display = 'block';
+                loginFields.style.display = 'none';
+                submitBtnText.textContent = 'JOIN THE Z-APOCALYPSE';
+            } else {
+                signupFields.style.display = 'none';
+                loginFields.style.display = 'block';
+                submitBtnText.textContent = 'SURVIVE NOW';
+            }
+            modal.style.display = 'block';
+        };
+
+        loginBtn.addEventListener('click', () => openModal('login'));
+        signupBtn.addEventListener('click', () => openModal('signup'));
+        closeModal.addEventListener('click', () => modal.style.display = 'none');
+
+        window.onclick = (event) => {
+            if (event.target == modal) modal.style.display = 'none';
+        };
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = currentMode === 'login' ? document.getElementById('login-password').value : document.getElementById('password').value;
+            const email = currentMode === 'signup' ? document.getElementById('email').value : '';
+            
+            const url = `http://localhost:5100/api/auth/${currentMode}`;
+            const body = currentMode === 'login' ? { username, password } : { username, email, password };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (currentMode === 'signup') {
+                        alert('Signup Successful! Please Login');
+                        openModal('login');
+                        statusMsg.textContent = 'SIGNUP SUCCESSFUL! PLEASE LOGIN';
+                        statusMsg.style.color = "#00ff00";
+                    } else {
+                        localStorage.setItem('lastSurvivor', username);
+                        isUserLoggedIn = true;
+                        playBtn.classList.remove('disabled');
+                        playBtn.removeAttribute('disabled');
+                        
+                        statusMsg.textContent = `SUCCESS! WELCOME BACK, ${username.toUpperCase()}`;
+                        statusMsg.style.color = "#00ff00";
+                        
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                            window.location.href = 'lobby.html';
+                        }, 1000);
+                    }
+                } else {
+                    statusMsg.textContent = `ERROR: ${data.message || 'Authentication failed'}`;
+                    statusMsg.style.color = "#ff0000";
+                }
+            } catch (err) {
+                console.error(err);
+                statusMsg.textContent = "ERROR: BACKEND SERVER NOT REACHABLE";
+                statusMsg.style.color = "#ff0000";
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (!isUserLoggedIn) {
+                openModal('login');
+                return;
+            }
+            window.location.href = 'lobby.html';
+        });
+    });
+</script>
+</body>
+</html>

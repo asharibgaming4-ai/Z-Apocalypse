@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-APOCALYPSE | SURVIVAL LOBBY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&family=Orbitron:wght@400;900&display=swap"
+        rel="stylesheet">
+    <!-- Three.js for 3D Character Preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        :root {
+            --neon-red: #ff0000;
+            --toxic-green: #39ff14;
+            --header-bg: rgba(20, 20, 20, 0.95);
+            --metallic-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('lobby back pic.png');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* --- PROFESSIONAL HEADER --- */
+        .game-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: var(--header-bg);
+            border-bottom: 2px solid var(--metallic-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Left Section */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+            color: var(--neon-red);
+        }
+
+        .back-btn svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .back-btn span {
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .profile-sec {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 1px solid #333;
+            padding-left: 20px;
+        }
+
+        .p-icon {
+            width: 55px;
+            height: 55px;
+            background: #000;
+            border: 2px solid #ffaa00;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+        }
+
+        .p-icon:hover {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .p-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .p-info {
+            text-align: left;
+        }
+
+        .p-username {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .p-rank-line {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rank-bar {
+            width: 100px;
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rank-fill {
+            width: 40%;
+            height: 100%;
+            background: #ffaa00;
+            box-shadow: 0 0 5px #ffaa00;
+        }
+
+        /* Center Section */
+        .header-center {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .center-badge {
+            background: linear-gradient(to bottom, #333, #111);
+            border: 2px solid #555;
+            padding: 10px 40px;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .badge-title {
+            font-family: 'Creepster', cursive;
+            font-size: 2.5rem;
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(139, 0, 0, 0.8);
+            filter: brightness(1.2);
+        }
+
+        .badge-sub {
+            font-size: 0.7rem;
+            color: #ffaa00;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Right Section */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .res-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .res-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .res-line svg {
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 0 5px currentColor);
+            animation: resIconShine 3s infinite;
+        }
+
+        @keyframes resIconShine {
+            0%, 100% { filter: drop-shadow(0 0 5px currentColor) brightness(1); }
+            50% { filter: drop-shadow(0 0 12px currentColor) brightness(1.5); }
+        }
+
+        .res-val {
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            color: #fff;
+        }
+
+        .res-label {
+            font-size: 0.5rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .control-btns {
+            display: flex;
+            gap: 20px;
+            border-left: 1px solid #333;
+            padding-left: 20px;
+        }
+
+        .ctrl-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .ctrl-item:hover {
+            opacity: 1;
+            color: #ffaa00;
+            transform: scale(1.1);
+        }
+
+        .ctrl-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .ctrl-item span {
+            font-size: 0.55rem;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
+        /* --- SIDEBAR MENU --- */
+        .sidebar {
+            position: fixed;
+            left: 40px;
+            top: 55%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            width: 220px;
+            height: 60px;
+            background: rgba(10, 0, 0, 0.7);
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+        }
+
+        .nav-item::before,
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #8b0000;
+            transition: 0.4s;
+            pointer-events: none;
+        }
+
+        .nav-item::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .nav-item::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(20, 0, 0, 0.9);
+            transform: scale(1.05) translateX(10px);
+        }
+
+        .nav-item:hover::before,
+        .nav-item:hover::after {
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            border-image: linear-gradient(45deg, #ff0000, #00ff00) 1;
+        }
+
+        .nav-item span {
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: 0.3s;
+            display: block;
+        }
+
+        .nav-item:hover span {
+            letter-spacing: 4px;
+        }
+
+        /* --- CENTER STAGE --- */
+        .center-stage {
+            position: fixed;
+            top: 55%;
+            left: 45%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 650px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            z-index: 5;
+        }
+
+        .hero-model {
+            width: 100%;
+            height: 90%;
+            background-image: url('https://www.freeiconspng.com/uploads/soldier-png-27.png');
+            background-size: contain;
+            background-position: bottom center;
+            background-repeat: no-repeat;
+            animation: breathe 5s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .platform {
+            width: 400px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+            transform: rotateX(70deg);
+            margin-top: -50px;
+        }
+
+        /* --- ACTION BUTTON --- */
+        .action-container {
+            position: fixed;
+            bottom: 30px;
+            right: 35px;
+            z-index: 100;
+            display: flex;
+            justify-content: flex-end;
+            width: 320px;
+        }
+
+        .start-btn {
+            background: rgba(10, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 12px 40px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.6rem;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: 3px;
+            position: relative;
+            transition: 0.4s;
+            width: 280px;
+            text-align: center;
+        }
+
+        .start-btn::before,
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #8b0000;
+            transition: 0.4s;
+        }
+
+        .start-btn::before {
+            top: -5px;
+            left: -5px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .start-btn::after {
+            bottom: -5px;
+            right: -5px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .start-btn:hover {
+            background: rgba(30, 0, 0, 0.95);
+            transform: scale(1.05);
+        }
+
+        .start-btn:hover::before,
+        .start-btn:hover::after {
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border-image: linear-gradient(45deg, #ff0000, #00ff00) 1;
+        }
+
+        .start-btn span {
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        /* --- RIGHT PANELS --- */
+        .right-panels-container {
+            position: fixed;
+            top: 100px;
+            right: 45px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .panel-box {
+            background: rgba(10, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 5px 20px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+            max-height: 190px;
+        }
+
+        .panel-box::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+        }
+
+        .panel-box::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--toxic-green), transparent);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .panel-title {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #fff;
+            letter-spacing: 0px;
+            text-shadow: none;
+        }
+
+        /* Shop Slots & Arrows */
+        .shop-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .nav-arrow {
+            color: var(--neon-red);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-arrow:hover {
+            transform: scale(1.2);
+        }
+
+        .shop-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .slot {
+            background: rgba(20, 20, 20, 0.85);
+            border: 2px solid #444;
+            padding: 5px;
+            text-align: center;
+            transition: 0.4s;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Colored Borders from Reference */
+        .slot-rifle {
+            border-color: #ff8c00;
+            box-shadow: inset 0 0 10px rgba(255, 140, 0, 0.3);
+        }
+
+        .slot-suit {
+            border-color: #d4ff00;
+            box-shadow: inset 0 0 10px rgba(212, 255, 0, 0.3);
+        }
+
+        .slot-medkit {
+            border-color: #4a5a6a;
+            box-shadow: inset 0 0 10px rgba(74, 90, 106, 0.3);
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 12px;
+            height: 12px;
+            opacity: 0.7;
+        }
+
+        .slot:hover {
+            transform: translateY(-5px);
+            filter: brightness(1.2);
+        }
+
+        .item-icon {
+            width: 80%;
+            height: 80%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .shop-subtext {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #ffda44;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* Shop Slots */
+        .shop-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .slot {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 4px;
+            text-align: center;
+            transition: 0.4s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .slot:hover {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: var(--neon-red);
+            transform: scale(1.05);
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 6px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 1));
+        }
+
+        .price-tag {
+            font-size: 0.65rem;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .price-val {
+            display: block;
+            font-size: 0.8rem;
+            color: #ffaa00;
+            font-family: 'Creepster', cursive;
+            margin-top: 1px;
+        }
+
+        .shop-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-more-btn {
+            background: transparent;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 3px 12px;
+            font-family: 'Creepster', cursive;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .view-more-btn:hover {
+            background: var(--neon-red);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-red);
+        }
+
+        /* Missions */
+        .mission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mission-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .m-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .m-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #bbb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .m-icon {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #ffaa00;
+            transform: rotate(45deg);
+            box-shadow: 0 0 5px #ffaa00;
+        }
+
+        .m-progress-txt {
+            font-size: 0.8rem;
+            color: #ffaa00;
+            font-family: 'Creepster', cursive;
+        }
+
+        .m-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .m-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #111, #ffaa00);
+            box-shadow: 0 0 8px #ffaa00;
+        }
+
+        /* --- PREMIUM SHOP MODAL --- */
+        .shop-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('lobby back pic.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(25px);
+            animation: shopFadeIn 0.3s ease-out;
+        }
+
+        @keyframes shopFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .shop-modal-content {
+            width: 70%;
+            max-width: 800px;
+            background: rgba(10, 10, 10, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            position: relative;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 1);
+            border-radius: 4px;
+        }
+
+        /* Neon Line Effects */
+        .shop-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+            z-index: 5;
+        }
+
+        .shop-modal-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #39ff14, transparent);
+            z-index: 5;
+        }
+
+        .shop-modal-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            position: relative;
+            gap: 15px;
+        }
+
+        .shop-modal-title {
+            font-family: 'Creepster', cursive;
+            font-size: 3.8rem;
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.5));
+            text-transform: uppercase;
+            animation: titlePulse 3s infinite ease-in-out;
+            margin: 0;
+            line-height: 1;
+        }
+
+        @keyframes titlePulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+                filter: brightness(1.2);
+            }
+        }
+
+        .close-shop {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #777;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-shop:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .shop-tabs {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .shop-tab {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #777;
+            padding: 5px 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .shop-tab.active {
+            background: rgba(57, 255, 20, 0.2);
+            border-color: #39ff14;
+            color: #39ff14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+
+        .shop-tab:hover:not(.active) {
+            border-color: #555;
+            color: #ccc;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #39ff14 #111;
+        }
+
+        .shop-item-card {
+            background: rgba(20, 22, 20, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+
+        .shop-item-card:hover {
+            background: rgba(40, 42, 40, 0.95);
+            border-color: #39ff14;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        .shop-item-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0000, #39ff14);
+            transition: 0.4s;
+        }
+
+        .shop-item-card:hover::after {
+            width: 100%;
+        }
+
+        .item-img-box {
+            background: linear-gradient(to bottom, #4a4d4a, #2a2d2a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-img-box::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1;
+        }
+
+        .shop-item-img {
+            width: 95%;
+            height: auto;
+            max-height: 110px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.9));
+            z-index: 2;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .shop-item-img.img-error {
+            border: 1px solid #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+        }
+
+        .shop-item-card:hover .shop-item-img {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .shop-item-name {
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .shop-item-price {
+            color: #ffcc00;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .tier-badge {
+            background: #333;
+            border: 1px solid #555;
+            color: #aaa;
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            width: fit-content;
+            margin: 0 auto 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(to bottom, #3a3d3a, #1a1d1a);
+            color: #ccc;
+            border: 1px solid #444;
+            padding: 12px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            transition: 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .buy-btn::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #39ff14;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #39ff14;
+        }
+
+        .buy-btn:hover {
+            background: linear-gradient(to bottom, #4a4d4a, #2a2d2a);
+            color: #fff;
+            border-color: #666;
+        }
+
+        /* Thin Neon Green Scrollbar */
+        .shop-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .shop-grid::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .shop-grid::-webkit-scrollbar-thumb {
+            background: #39ff14;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .shop-grid::-webkit-scrollbar-thumb:hover {
+            background: #fff;
+        }
+
+        .nav-arrow.disabled {
+            opacity: 0.2;
+            cursor: default;
+        }
+
+        /* --- 3D CHARACTER SELECTION REBUILD (STAR WARS STYLE) --- */
+        .char-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a1118 0%, #000 100%);
+            z-index: 6000;
+            display: none;
+            overflow: hidden;
+            animation: modalFadeIn 0.5s ease-out;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .char-modal-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            gap: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* LEFT: Grid Area */
+        .char-grid-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .char-modal-title {
+            font-family: 'Creepster', cursive;
+            font-size: 3rem;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #ff0000, #39ff14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
+        }
+
+        .char-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .char-portrait-box {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .char-portrait-box:hover {
+            border-color: rgba(0, 242, 255, 0.5);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .char-portrait-box.selected {
+            border-color: #fff;
+            box-shadow: 0 0 15px #fff, inset 0 0 10px rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .char-portrait-box.locked::after {
+            content: '🔒';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .char-portrait-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.5);
+            transition: 0.3s;
+        }
+
+        .char-portrait-box:hover img,
+        .char-portrait-box.selected img {
+            filter: grayscale(0);
+            transform: scale(1.1);
+        }
+
+        .coming-soon-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.6rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon-box::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: scanline 4s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(33%, 33%); }
+        }
+
+        .coming-soon-box span {
+            font-size: 1.5rem;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* CENTER: Viewer Area */
+        .char-viewer-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 50px;
+        }
+
+        #char-3d-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .rotating-stage {
+            width: 450px;
+            height: 120px;
+            background: radial-gradient(ellipse at center, rgba(0, 242, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: rotateX(75deg);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.4);
+            border: 4px solid rgba(0, 242, 255, 0.5);
+            animation: stageGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes stageGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+                border-color: rgba(0, 242, 255, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(0, 242, 255, 0.7);
+                border-color: rgba(0, 242, 255, 0.8);
+            }
+        }
+
+        /* RIGHT: Stats Area */
+        .char-stats-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .char-detail-header {
+            border-bottom: 1px solid rgba(0, 242, 255, 0.3);
+            padding-bottom: 15px;
+        }
+
+        .char-detail-name {
+            font-family: 'Creepster', cursive;
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+        }
+
+        .char-detail-role {
+            font-size: 0.8rem;
+            color: #00f2ff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .char-detail-desc {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .stat-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0088ff, #00f2ff);
+            box-shadow: 0 0 10px #00f2ff;
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lock-status-panel {
+            margin-top: auto;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+
+        .lock-status-panel.active {
+            display: block;
+        }
+
+        .lock-msg {
+            font-size: 0.7rem;
+            color: #ff4444;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .unlock-btn-premium {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .unlock-btn-premium:hover {
+            background: #fff;
+            box-shadow: 0 0 20px #ffcc00;
+        }
+
+        .deploy-btn-large {
+            margin-top: auto;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            transition: 0.3s;
+        }
+
+        .deploy-btn-large:hover {
+            background: #00f2ff;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+        }
+
+        .deploy-btn-large:disabled {
+            background: #222;
+            color: #444;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .back-nav {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .nav-btn-alt {
+            background: none;
+            border: none;
+            color: #555;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .nav-btn-alt:hover {
+            color: #fff;
+        }
+
+        .nav-btn-alt span {
+            width: 30px;
+            height: 30px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
+
+        /* LEVELS MODAL STYLES */
+        .levels-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('lobby back pic.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 4000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            animation: shopFadeIn 0.3s ease-out;
+        }
+
+        .levels-content {
+            width: 90%;
+            max-width: 1100px;
+            background: rgba(10, 12, 10, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 1);
+        }
+
+        .levels-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+        }
+
+        .levels-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #39ff14, transparent);
+        }
+
+        .levels-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .levels-title {
+            font-family: 'Creepster', cursive;
+            font-size: 3rem;
+            background: linear-gradient(to bottom, #a2cc3a, #39ff14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: titlePulse 3s infinite ease-in-out;
+        }
+
+        .levels-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #ff0000 #111;
+        }
+
+        .level-card {
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover:not(.locked) {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #39ff14;
+            box-shadow: 0 10px 30px rgba(57, 255, 20, 0.2);
+        }
+
+        .level-img-box {
+            width: 100%;
+            height: 120px;
+            background: #111;
+            margin-bottom: 10px;
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .level-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .level-card:hover .level-img {
+            transform: scale(1.1);
+        }
+
+        .level-name {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .level-diff {
+            font-size: 0.75rem;
+            color: #ffda44;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .level-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+            cursor: not-allowed;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .lock-icon-lg {
+            width: 40px;
+            height: 40px;
+            fill: #555;
+        }
+
+        .back-lobby-btn {
+            background: rgba(10, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 12px 45px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            cursor: pointer;
+            letter-spacing: 2px;
+            position: relative;
+            transition: 0.4s;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .back-lobby-btn span {
+            background: linear-gradient(to bottom, #a2cc3a 0%, #39ff14 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .back-lobby-btn::before,
+        .back-lobby-btn::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #004400;
+            transition: 0.4s;
+        }
+
+        .back-lobby-btn::before {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .back-lobby-btn::after {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .back-lobby-btn:hover {
+            background: rgba(30, 0, 0, 0.95);
+            transform: scale(1.05);
+        }
+
+        .back-lobby-btn:hover::before,
+        .back-lobby-btn:hover::after {
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            border-image: linear-gradient(45deg, #00ff00, #39ff14) 1;
+        }
+
+        /* INVENTORY MODAL STYLES */
+        .inventory-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('lobby back pic.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(25px);
+            animation: shopFadeIn 0.3s ease-out;
+        }
+
+        .inv-content {
+            width: 450px;
+            background: rgba(10, 10, 10, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 1);
+        }
+
+        /* Inventory Neon Line Effects */
+        .inv-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+            z-index: 5;
+        }
+
+        .inv-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #39ff14, transparent);
+            z-index: 5;
+        }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .inv-title {
+            font-family: 'Creepster', cursive;
+            font-size: 2.8rem;
+            background: linear-gradient(to bottom, #a2cc3a 0%, #39ff14 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.5));
+            text-transform: uppercase;
+            animation: titlePulse 3s infinite ease-in-out;
+        }
+
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .inv-slot {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .inv-slot:hover {
+            background: rgba(57, 255, 20, 0.1);
+            border-color: #39ff14;
+            box-shadow: inset 0 0 15px rgba(57, 255, 20, 0.2), 0 0 15px rgba(57, 255, 20, 0.3);
+            transform: scale(1.05);
+        }
+
+        .inv-slot.empty {
+            cursor: default;
+        }
+
+        .inv-item-img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
+        }
+
+        .inv-count {
+            position: absolute;
+            bottom: 3px;
+            right: 5px;
+            font-size: 0.7rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1px 4px;
+            border-radius: 2px;
+        }
+
+        .inv-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 50px;
+        }
+
+        .inv-btn {
+            flex: 1;
+            padding: 10px;
+            background: linear-gradient(90deg, #ff0000, #39ff14);
+            color: #000;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .inv-btn:hover {
+            background: #fff;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        .inv-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Avatar Modal */
+        .avatar-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .avatar-content {
+            background: #111;
+            border: 2px solid #333;
+            padding: 30px;
+            width: 450px;
+            text-align: center;
+            position: relative;
+        }
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .avatar-item {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 3px solid #444;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+        .avatar-item:hover {
+            border-color: var(--toxic-green);
+            transform: scale(1.1);
+        }
+        .avatar-item img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* Settings Modal Specifics */
+        .settings-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 15000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-glass {
+            background: rgba(10, 10, 10, 0.85) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border: 1px solid rgba(57, 255, 20, 0.2) !important;
+            width: 550px !important;
+            padding: 30px !important;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 1);
+        }
+
+        .settings-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-family: 'Creepster', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 15px;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: #39ff14;
+        }
+
+        .tab-btn.active {
+            color: #39ff14;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #39ff14;
+            box-shadow: 0 0 10px #39ff14;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+            min-height: 250px;
+            text-align: left;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sliders */
+        .setting-row {
+            margin-bottom: 20px;
+        }
+
+        .setting-row label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #39ff14;
+            font-family: 'Creepster', cursive;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+        }
+
+        .setting-row input[type="range"] {
+            width: 100%;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .setting-row input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #39ff14;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #39ff14;
+            transition: 0.2s;
+        }
+
+        .setting-row input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px #39ff14;
+        }
+
+        /* Dropdown */
+        .setting-row select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(57, 255, 20, 0.4);
+            color: #fff;
+            padding: 10px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-toggle {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+            border: 1px solid rgba(57, 255, 20, 0.2);
+        }
+
+        .slider-toggle:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 3px;
+            background-color: #666;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-toggle {
+            background-color: rgba(57, 255, 20, 0.2);
+            border-color: #39ff14;
+        }
+
+        input:checked + .slider-toggle:before {
+            transform: translateX(24px);
+            background-color: #39ff14;
+            box-shadow: 0 0 10px #39ff14;
+        }
+
+        .apply-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: linear-gradient(to bottom, #1a4d1a 0%, #002200 100%);
+            border: 1px solid #39ff14;
+            color: #39ff14;
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+        }
+
+        .apply-btn:hover {
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+            text-shadow: 0 0 10px #39ff14;
+            transform: scale(1.02);
+        }
+
+        /* Notifications */
+        .notification-container {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #333;
+            padding: 15px 30px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            animation: notifySlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        @keyframes notifySlideIn {
+            from { opacity: 0; transform: translateY(-50px) scale(0.8); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .notification.success {
+            border-color: #39ff14;
+            color: #39ff14;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .notification.error {
+            border-color: #ff0000;
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="game-header">
+        <div class="header-left">
+            <div class="back-btn" onclick="window.location.href='index.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                </svg>
+                <span>BACK</span>
+            </div>
+            <div class="profile-sec">
+                <div class="p-icon" onclick="toggleAvatarModal()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1" alt="P" id="header-avatar">
+                </div>
+                <div class="p-info">
+                    <div class="p-username" id="header-user">HAFF</div>
+                    <div class="p-rank-line">
+                        <span id="header-level-rank">Level 42 | Rank: II</span>
+                        <div class="rank-bar">
+                            <div class="rank-fill" id="rank-fill-bar" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="center-badge">
+                <div class="badge-title">Z-APOCALYPSE</div>
+                <div class="badge-sub">ONLINE</div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="res-box">
+                <div class="res-line">
+                    <!-- Professional Dollar Icon -->
+                    <svg viewBox="0 0 24 24" fill="#ffd700">
+                        <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+                        <path d="M12 7v10M14.5 9a2.5 2.5 0 0 0-2.5-2.5H11a2.5 2.5 0 0 0 0 5h2a2.5 2.5 0 0 1 0 5h-1.5a2.5 2.5 0 0 1-2.5-2.5" 
+                              stroke="#ffd700" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    </svg>
+                    <span class="res-val" id="header-credits">12,500</span>
+                </div>
+                <span class="res-label">Currency Credits</span>
+            </div>
+            <div class="res-box">
+                <div class="res-line">
+                    <!-- Professional Diamond Icon -->
+                    <svg viewBox="0 0 24 24" fill="#00f2ff">
+                        <path d="M12 2L4.5 9L12 22L19.5 9L12 2Z" fill="url(#diam-grad)"/>
+                        <path d="M12 2L8.5 9H15.5L12 2Z" fill="rgba(255,255,255,0.3)"/>
+                        <defs>
+                            <linearGradient id="diam-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00f2ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0088ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="res-val" id="header-diamonds">75</span>
+                </div>
+                <span class="res-label">Cyber Diamonds</span>
+            </div>
+            <div class="control-btns">
+                <div class="ctrl-item" onclick="toggleSettings(true)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                    <span>SETTINGS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="nav-item" onclick="toggleInventory(true)"><span>INVENTORY</span></div>
+        <div class="nav-item" onclick="toggleShop(true)"><span>STORE</span></div>
+        <div class="nav-item" onclick="toggleLevels(true)"><span>LEVELS</span></div>
+        <div class="nav-item" onclick="toggleCharacter(true)"><span>CHARACTER</span></div>
+    </nav>
+
+    <main class="center-stage">
+        <div class="hero-model"></div>
+        <div class="platform"></div>
+    </main>
+
+
+    <!-- 3D CHARACTER SELECTION REBUILD -->
+    <div class="char-modal" id="char-modal">
+        <div class="char-modal-container">
+            <!-- LEFT: GRID -->
+            <div class="char-grid-area">
+                <h1 class="char-modal-title">SELECT YOUR CHARACTER</h1>
+                <div class="char-selection-grid" id="char-grid">
+                    <!-- Dynamic grid items -->
+                    <div class="char-portrait-box selected" id="p-0" onclick="selectChar(0)">
+                        <img src="assets/profile 1.png" id="img-0">
+                    </div>
+                    <div class="char-portrait-box" id="p-1" onclick="selectChar(1)">
+                        <img src="assets/profile 2.png" id="img-2">
+                    </div>
+                    <div class="char-portrait-box locked" id="p-2" onclick="selectChar(2)">
+                        <img src="assets/profile 3.png" id="img-3">
+                    </div>
+                    <!-- Coming Soon Slots -->
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                </div>
+            </div>
+
+            <!-- CENTER: VIEWER -->
+            <div class="char-viewer-area">
+                <div id="char-3d-container"></div>
+                <div class="rotating-stage"></div>
+
+                <!-- Setup banner if needed -->
+                <div class="model-setup-banner" id="model-setup-banner"
+                    style="position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 300px; padding: 20px;">
+                    <h3 style="font-size: 0.8rem;">⚡ LOAD MODELS</h3>
+                    <p style="font-size: 0.6rem; color: #666; margin: 10px 0;">Select 3 models from assets folder</p>
+                    <button class="setup-load-btn" onclick="document.getElementById('model-upload').click()"
+                        style="padding: 10px; font-size: 0.7rem;">CHOOSE FILES</button>
+                    <div class="setup-progress" id="setup-progress">SAVING...</div>
+                </div>
+            </div>
+
+            <!-- RIGHT: STATS -->
+            <div class="char-stats-area">
+                <div class="char-detail-header">
+                    <h2 class="char-detail-name" id="char-name">REMY</h2>
+                    <p class="char-detail-role" id="char-role">SOLDIER</p>
+                </div>
+                <p class="char-detail-desc" id="char-desc">Heavy combat specialist. High durability and devastating
+                    firepower capabilities.</p>
+
+                <div class="stats-container">
+                    <div class="stat-row">
+                        <span class="stat-label">DAMAGE</span>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" id="stat-damage" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">SPEED</span>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" id="stat-speed" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">ACCURACY</span>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" id="stat-accuracy" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">ARMOR</span>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" id="stat-armor" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lock-status-panel" id="lock-panel">
+                    <p class="lock-msg" id="lock-msg">LOCKED: REACH LEVEL 3 + 5,000 SKULL TOKENS</p>
+                    <button class="unlock-btn-premium" onclick="unlockMedea()">UNLOCK CHARACTER</button>
+                </div>
+
+                <button class="deploy-btn-large" id="deploy-btn" onclick="saveCharacter()">SELECT</button>
+            </div>
+        </div>
+
+        <div class="back-nav">
+            <button class="nav-btn-alt" onclick="toggleCharacter(false)"><span>X</span> BACK</button>
+        </div>
+
+        <input type="file" id="model-upload" style="display: none;" accept=".fbx,.glb" multiple>
+    </div>
+
+    <!-- Avatar Selection Modal -->
+    <div class="avatar-modal" id="avatar-modal">
+        <div class="avatar-content">
+            <h2 style="color: #fff; letter-spacing: 2px; margin-bottom: 10px;">SELECT SURVIVOR</h2>
+            <div class="avatar-grid" id="avatar-grid">
+                <!-- Avatars will be injected here -->
+            </div>
+            <button onclick="toggleAvatarModal()" style="margin-top: 20px; background: #333; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Orbitron';">CANCEL</button>
+        </div>
+    </div>
+
+    <div class="right-panels-container">
+        <!-- ITEM SHOP -->
+        <div class="panel-box shop-panel"
+            style="border: none; background: transparent; backdrop-filter: none; box-shadow: none;">
+            <div class="panel-header">
+                <span class="panel-title">Item Shop</span>
+            </div>
+            <div class="shop-container">
+                <div class="nav-arrow" id="prev-btn" onclick="navWeapons(-1)">&lt;</div>
+                <div class="shop-slots" id="lobby-slots">
+                    <!-- Slots generated by JS -->
+                </div>
+                <div class="nav-arrow" id="next-btn" onclick="navWeapons(1)">&gt;</div>
+            </div>
+            <div class="shop-subtext">NEW ARRIVALS - LIMITED TIME</div>
+            <div class="shop-footer" style="margin-top: 10px; display: flex; justify-content: center;">
+                <button class="view-more-btn" onclick="toggleShop(true)">OPEN ARMORY</button>
+            </div>
+        </div>
+
+        <!-- SURVIVAL MISSIONS -->
+        <div class="panel-box mission-panel" style="margin-top: 15px;">
+            <div class="distress-border"></div>
+            <div class="panel-header" style="justify-content: flex-start; margin-bottom: 10px;">
+                <span class="panel-title"
+                    style="font-size: 1.1rem; color: #eee; font-family: 'Roboto', sans-serif;">Survival Missions</span>
+            </div>
+            <div class="mission-list" id="mission-list-container">
+                <!-- Missions injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="start-btn"><span>START NOW</span></button>
+    </div>
+
+    <!-- SHOP MODAL -->
+    <div class="shop-modal" id="armory-modal">
+        <div class="shop-modal-content">
+            <div class="shop-modal-header">
+                <span class="shop-modal-title">Z-ARMORY</span>
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="switchShopTab('weapons')">Weapons</div>
+                    <div class="shop-tab" onclick="switchShopTab('survival')">Survival Gear</div>
+                </div>
+                <span class="close-shop" onclick="toggleShop(false)">&times;</span>
+            </div>
+            <div class="shop-grid" id="full-shop-grid">
+                <!-- Shop items generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="levels-modal" id="levels-modal">
+        <div class="levels-content">
+            <div class="levels-header">
+                <span class="levels-title">MISSION MAPS</span>
+                <span class="close-shop" onclick="toggleLevels(false)">&times;</span>
+            </div>
+            <div class="levels-grid" id="levels-grid">
+                <!-- Level Cards generated by JS -->
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="back-lobby-btn" onclick="toggleLevels(false)"><span>BACK TO LOBBY</span></button>
+            </div>
+        </div>
+    </div>
+    <div class="inventory-modal" id="inventory-modal">
+        <div class="inv-content">
+            <div class="inv-header">
+                <span class="inv-title">Survivor Inventory</span>
+                <span class="close-shop" onclick="toggleInventory(false)">&times;</span>
+            </div>
+            <div class="inv-item-info" id="inv-item-info">Select an item</div>
+            <div class="inv-grid" id="inventory-grid">
+                <!-- 12 slots -->
+            </div>
+            <div class="inv-actions">
+                <button class="inv-btn" id="inv-use-btn" disabled>Use / Equip</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="settings-modal">
+        <div class="modal-content settings-glass">
+            <span class="close-btn" onclick="toggleSettings(false)">&times;</span>
+            <h2 style="font-family: 'Creepster', cursive; font-size: 2.2rem; text-align: center; background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;"><span>SETTINGS</span></h2>
+            
+            <div class="settings-tabs">
+                <button class="tab-btn active" onclick="switchSettingsTab(event, 'audio')">AUDIO</button>
+                <button class="tab-btn" onclick="switchSettingsTab(event, 'graphics')">GRAPHICS</button>
+                <button class="tab-btn" onclick="switchSettingsTab(event, 'controls')">CONTROLS</button>
+            </div>
+
+            <!-- Audio Tab -->
+            <div class="tab-content active" id="audio">
+                <div class="setting-row">
+                    <label>MASTER VOLUME <span class="val-display">80%</span></label>
+                    <input type="range" min="0" max="100" value="80" oninput="updateSliderVal(this)">
+                </div>
+                <div class="setting-row">
+                    <label>MUSIC VOLUME <span class="val-display">60%</span></label>
+                    <input type="range" min="0" max="100" value="60" oninput="updateSliderVal(this)">
+                </div>
+                <div class="setting-row">
+                    <label>SFX VOLUME <span class="val-display">90%</span></label>
+                    <input type="range" min="0" max="100" value="90" oninput="updateSliderVal(this)">
+                </div>
+            </div>
+
+            <!-- Graphics Tab -->
+            <div class="tab-content" id="graphics">
+                <div class="setting-row">
+                    <label>GRAPHICS QUALITY</label>
+                    <select>
+                        <option>LOW</option>
+                        <option>MEDIUM</option>
+                        <option>HIGH</option>
+                        <option selected>ULTRA</option>
+                    </select>
+                </div>
+                <div class="setting-row" style="display: flex; justify-content: space-between; align-items: center;">
+                    <label style="margin-bottom: 0;">FULLSCREEN MODE</label>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <label>RENDER SCALE <span class="val-display">100%</span></label>
+                    <input type="range" min="50" max="150" value="100" oninput="updateSliderVal(this)">
+                </div>
+            </div>
+
+            <!-- Controls Tab -->
+            <div class="tab-content" id="controls">
+                <div style="color: #666; text-align: center; font-family: 'Creepster', cursive; margin-top: 50px;">
+                    Control rebinding coming soon in the next update.
+                </div>
+            </div>
+
+            <button class="apply-btn" onclick="applySettings(this)"><span>APPLY CHANGES</span></button>
+        </div>
+    </div>
+
+    <div class="notification-container" id="notification-container"></div>
+
+    <script>
+        const avatarList = [
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Felix",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Aria",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Leo",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Luna",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Milo",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Maya",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Oscar",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Zoe",
+            "https://api.dicebear.com/7.x/lorelei/svg?seed=Jasper"
+        ];
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            const notify = document.createElement('div');
+            notify.className = `notification ${type}`;
+            notify.textContent = message;
+            container.appendChild(notify);
+
+            setTimeout(() => {
+                notify.style.animation = 'notifySlideIn 0.4s reverse forwards';
+                setTimeout(() => notify.remove(), 400);
+            }, 3000);
+        }
+
+        let lobbyData = {
+            user: {
+                name: localStorage.getItem('lastSurvivor') || "HAFF",
+                credits: 0,
+                level: 1,
+                rank: "ROOKIE",
+                exp: 45,
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1"
+            },
+            missions: [
+                { id: "m1", title: "15 HEADSHOTS", progress: 12, goal: 15 },
+                { id: "m2", title: "SURVIVE Z-WAVE", progress: 0, goal: 1 },
+                { id: "m3", title: "LOOT 10 MEDKITS", progress: 2, goal: 10 }
+            ]
+        };
+
+        let weapons = [];
+        let survivalItems = [];
+        let ownedItems = [];
+        let inventory = [];
+        let activeTab = 'weapons';
+
+        async function initData() {
+            const username = lobbyData.user.name;
+            try {
+                // Fetch Profile
+                const profileRes = await fetch(`http://localhost:5100/api/user/profile/${username}`);
+                if (profileRes.ok) {
+                    const profile = await profileRes.json();
+                    lobbyData.user.credits = profile.coins;
+                    lobbyData.user.equippedWeaponId = profile.equippedWeaponId;
+                }
+
+                // Fetch Store Items
+                const storeRes = await fetch('http://localhost:5100/api/store/items');
+                if (storeRes.ok) {
+                    const allItems = await storeRes.json();
+                    console.log("Store Items:", allItems);
+                    weapons = allItems.filter(i => i.category === 'Weapon');
+                    survivalItems = allItems.filter(i => i.category === 'Survival');
+                }
+
+                // Fetch Inventory
+                await fetchInventory();
+
+            } catch (err) {
+                console.error("Backend error:", err);
+                showNotification("ERROR: BACKEND UNREACHABLE", "error");
+            }
+
+            renderLobbyData();
+            updateLobbySlots();
+        }
+
+        async function fetchInventory() {
+            const username = lobbyData.user.name;
+            const invRes = await fetch(`http://localhost:5100/api/user/inventory/${username}`);
+            if (invRes.ok) {
+                ownedItems = await invRes.json();
+                inventory = ownedItems.map(i => ({ ...i, count: 1 })); // UI expectations
+            }
+        }
+
+        function renderLobbyData() {
+            document.getElementById('header-user').textContent = lobbyData.user.name.toUpperCase();
+            document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
+            document.getElementById('header-avatar').src = lobbyData.user.avatar;
+            
+            const missionContainer = document.getElementById('mission-list-container');
+            if (missionContainer) {
+                missionContainer.innerHTML = '';
+                lobbyData.missions.forEach(m => {
+                    const perc = Math.min(100, (m.progress / m.goal) * 100);
+                    const item = document.createElement('div');
+                    item.className = 'mission-item';
+                    item.innerHTML = `
+                        <div class="m-header">
+                            <div class="m-title"><div class="m-icon"></div> ${m.title}</div>
+                            <div class="m-progress-txt">${m.progress} / ${m.goal}</div>
+                        </div>
+                        <div class="m-bar-bg"><div class="m-bar-fill" style="width: ${perc}%"></div></div>
+                    `;
+                    missionContainer.appendChild(item);
+                });
+            }
+        }
+
+        async function purchaseItem(itemId) {
+            const username = lobbyData.user.name;
+            try {
+                const res = await fetch('http://localhost:5100/api/store/purchase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, itemId })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showNotification(data.message, 'success');
+                    lobbyData.user.credits = data.newBalance;
+                    document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
+                    
+                    await fetchInventory();
+                    fillShopGrid(); // Refresh buttons
+                } else {
+                    showNotification(data.message || "PURCHASE FAILED", 'error');
+                }
+            } catch (err) {
+                showNotification("CONNECTION ERROR", "error");
+            }
+        }
+
+        function toggleInventory(show) {
+            const modal = document.getElementById('inventory-modal');
+            modal.style.display = show ? 'flex' : 'none';
+            if (show) fillInventoryGrid();
+        }
+
+        function fillInventoryGrid() {
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            document.getElementById('inv-use-btn').disabled = true;
+            document.getElementById('inv-item-info').innerText = "Select an item";
+
+            for (let i = 0; i < 12; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inv-slot';
+                if (inventory[i]) {
+                    const item = inventory[i];
+                    slot.innerHTML = `<img src="${item.imageUrl}" class="inv-item-img">`;
+                    slot.onclick = () => selectInvItem(i);
+                    if (lobbyData.user.equippedWeaponId === item.id) {
+                        slot.style.borderColor = "#39ff14";
+                        slot.innerHTML += '<div style="position:absolute; top:2px; right:2px; color:#39ff14; font-size:0.5rem; font-weight:bold;">EQUIPPED</div>';
+                    }
+                } else {
+                    slot.classList.add('empty');
+                }
+                grid.appendChild(slot);
+            }
+        }
+
+        function selectInvItem(index) {
+            const item = inventory[index];
+            document.getElementById('inv-item-info').innerText = item.name.toUpperCase();
+            const btn = document.getElementById('inv-use-btn');
+            btn.disabled = false;
+            
+            const isEquipped = lobbyData.user.equippedWeaponId === item.id;
+            btn.innerText = isEquipped ? 'EQUIPPED' : (item.category === 'Weapon' ? 'EQUIP WEAPON' : 'USE ITEM');
+            btn.disabled = isEquipped;
+            
+            btn.onclick = () => equipItem(item.id);
+
+            const slots = document.querySelectorAll('.inv-slot');
+            slots.forEach((s, i) => s.style.borderColor = (i === index) ? '#00f2ff' : 'rgba(255,255,255,0.1)');
+        }
+
+        async function equipItem(itemId) {
+            const username = lobbyData.user.name;
+            try {
+                const res = await fetch('http://localhost:5100/api/user/equip', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, itemId })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    lobbyData.user.equippedWeaponId = data.equippedWeaponId;
+                    showNotification("ITEM EQUIPPED", 'success');
+                    fillInventoryGrid();
+                }
+            } catch (err) {
+                showNotification("EQUIP FAILED", "error");
+            }
+        }
+
+        function toggleShop(show) {
+            const modal = document.getElementById('armory-modal');
+            modal.style.display = show ? 'flex' : 'none';
+            if (show) fillShopGrid();
+        }
+
+        function switchShopTab(tab) {
+            activeTab = tab;
+            const tabs = document.querySelectorAll('.shop-tab');
+            tabs[0].classList.toggle('active', tab === 'weapons');
+            tabs[1].classList.toggle('active', tab === 'survival');
+            fillShopGrid();
+        }
+
+        function fillShopGrid() {
+            const grid = document.getElementById('full-shop-grid');
+            grid.innerHTML = '';
+            const itemsToRender = activeTab === 'weapons' ? weapons : survivalItems;
+
+            itemsToRender.forEach((w, index) => {
+                const isOwned = ownedItems.some(oi => oi.id === w.id);
+                const card = document.createElement('div');
+                card.className = 'shop-item-card';
+                card.innerHTML = `
+                    <div class="item-img-box"><img src="${w.imageUrl}" class="shop-item-img"></div>
+                    <div class="shop-item-name">${w.name}</div>
+                    <div class="shop-item-price">$${w.price.toLocaleString()}</div>
+                    <div class="tier-badge">${w.category.toUpperCase()}</div>
+                    <button class="buy-btn" ${isOwned ? '' : `onclick="purchaseItem(${w.id})"`}>
+                        ${isOwned ? 'OWNED' : 'PURCHASE'}
+                    </button>
+                `;
+                if (isOwned) {
+                    card.querySelector('.buy-btn').onclick = () => { toggleShop(false); toggleInventory(true); };
+                    card.querySelector('.buy-btn').innerText = "EQUIP";
+                }
+                grid.appendChild(card);
+            });
+        }
+
+        function saveLobbyData() {
+            // This was used for local storage, now we use specific API calls
+            console.log("Lobby data synced via APIs");
+        }
+
+        async function saveCharacter() {
+            const username = lobbyData.user.name;
+            const selectedChar = charData[selectedCharIndex].name;
+            localStorage.setItem('selectedRole', selectedChar);
+            showNotification(`${selectedChar} DEPLOYED!`, 'success');
+            toggleCharacter(false);
+        }
+
+        const levelsData = [
+            { name: "Training Camp", diff: 1, diffLabel: "Easy", img: "assets/level 1.png", reqLevel: 1 },
+            { name: "The Dark Tunnel", diff: 2, diffLabel: "Normal", img: "assets/level 2.png", reqLevel: 5 },
+            { name: "Cargo Yard", diff: 3, diffLabel: "Medium", img: "assets/level 3.png", reqLevel: 10 },
+            { name: "Parking Lot", diff: 4, diffLabel: "Hard", img: "assets/level 4.png", reqLevel: 20 },
+            { name: "The Rooftop", diff: 5, diffLabel: "Expert", img: "assets/level 5.png", reqLevel: 35 }
+        ];
+
+        function toggleLevels(show) {
+            const modal = document.getElementById('levels-modal');
+            modal.style.display = show ? 'flex' : 'none';
+            if (show) fillLevelsGrid();
+        }
+
+        function fillLevelsGrid() {
+            const grid = document.getElementById('levels-grid');
+            grid.innerHTML = '';
+            levelsData.forEach((lv, i) => {
+                const isLocked = lobbyData.user.level < lv.reqLevel;
+                const card = document.createElement('div');
+                card.className = `level-card ${isLocked ? 'locked' : ''}`;
+                let stars = '';
+                for (let j = 0; j < 5; j++) stars += `<span style="color: ${j < lv.diff ? '#ffaa00' : '#333'}">★</span>`;
+                card.innerHTML = `
+                    ${isLocked ? `<div class="lock-overlay"><svg class="lock-icon-lg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2 2 2 0 002 2m6-9h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2m-6-6a3 3 0 013 3v2H9V5a3 3 0 013-3z"/></svg><div style="font-size:0.8rem; margin-top:5px;">REQ LVL ${lv.reqLevel}</div></div>` : ''}
+                    <div class="level-img-box"><img src="${lv.img}" class="level-img"></div>
+                    <div class="level-name">${lv.name}</div>
+                    <div class="level-diff"><span>Difficulty: ${lv.diffLabel}</span><div style="margin-left: auto;">${stars}</div></div>
+                `;
+                if (!isLocked) card.onclick = () => showNotification(`Starting ${lv.name}...`);
+                grid.appendChild(card);
+            });
+        }
+
+        const charData = [
+            {
+                name: "REMY",
+                role: "FRONT-LINE VETERAN",
+                desc: "Former special forces. Heavy combat specialist with high durability and devastating firepower. The ultimate shield for any survivor squad.",
+                stats: { dmg: 85, spd: 40, acc: 65, arm: 90 },
+                model: "assets/Remy.fbx",
+                type: "fbx",
+                locked: false
+            },
+            {
+                name: "HUNTER",
+                role: "SHADOW OPERATIVE",
+                desc: "A mysterious phantom from the old world. Unmatched speed and tactical superiority. He strikes from the darkness and vanishes before the undead even notice.",
+                stats: { dmg: 70, spd: 95, acc: 80, arm: 40 },
+                model: "assets/hunter.fbx",
+                type: "fbx",
+                locked: false
+            },
+            {
+                name: "MEDEA",
+                role: "SILENT STALKER",
+                desc: "Master of stealth and urban scavenging. Optimized for agility and silent takedowns. She survives where others fall by staying out of sight.",
+                stats: { dmg: 50, spd: 80, acc: 60, arm: 45 },
+                model: "assets/Medea By M. Arrebola.fbx",
+                type: "fbx",
+                locked: true,
+                reqLevel: 3,
+                price: 5000
+            }
+        ];
+        let selectedCharIndex = 0;
+        let medeaUnlocked = false;
+
+        // Three.js Setup
+        let scene, camera, renderer, currentModel;
+        const container = document.getElementById('char-3d-container');
+
+        function initThreeJS() {
+            if (scene) return;
+            scene = new THREE.Scene();
+            const w = window.innerWidth, h = window.innerHeight;
+            const viewerWidth = w - 700;
+            camera = new THREE.PerspectiveCamera(45, viewerWidth / h, 0.1, 2000);
+            camera.position.set(0, 1.8, 6);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(viewerWidth, h);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
+            const direct = new THREE.DirectionalLight(0xffffff, 1.2);
+            direct.position.set(2, 8, 4);
+            direct.castShadow = true;
+            scene.add(direct);
+            const cyanLight = new THREE.PointLight(0x00f2ff, 3, 15);
+            cyanLight.position.set(-3, 2, 3);
+            scene.add(cyanLight);
+            const grid = new THREE.GridHelper(10, 20, 0x333333, 0x111111);
+            grid.position.y = -0.01;
+            scene.add(grid);
+            animate();
+            setupFileUpload();
+        }
+
+        const DB_NAME = 'ZApocalypseModels_v1';
+        const STORE = 'models';
+        function openDB() { return new Promise((res, rej) => { const req = indexedDB.open(DB_NAME, 1); req.onupgradeneeded = e => e.target.result.createObjectStore(STORE); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
+        async function dbPut(key, blob) { const db = await openDB(); return new Promise((res, rej) => { const t = db.transaction(STORE, 'readwrite'); t.objectStore(STORE).put(blob, key); t.oncomplete = res; t.onerror = rej; }); }
+        async function dbGet(key) { const db = await openDB(); return new Promise((res, rej) => { const t = db.transaction(STORE, 'readonly'); const r = t.objectStore(STORE).get(key); r.onsuccess = () => res(r.result); r.onerror = rej; }); }
+
+        async function initCharacterModels() {
+            let allReady = true;
+            for (let i = 0; i < charData.length; i++) {
+                const blob = await dbGet(charData[i].name);
+                if (blob) charData[i].blobUrl = URL.createObjectURL(blob);
+                else allReady = false;
+            }
+            if (allReady) selectChar(0);
+            else document.getElementById('model-setup-banner').style.display = 'flex';
+        }
+
+        function setupFileUpload() {
+            const input = document.getElementById('model-upload');
+            if (!input) return;
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                const progress = document.getElementById('setup-progress');
+                progress.style.display = 'block';
+                for (const file of files) {
+                    const lower = file.name.toLowerCase();
+                    let idx = -1;
+                    if (lower.includes('medea')) idx = 2; else if (lower.includes('remy')) idx = 0; else if (lower.includes('hunter')) idx = 1;
+                    if (idx >= 0) { await dbPut(charData[idx].name, file); charData[idx].blobUrl = URL.createObjectURL(file); }
+                }
+                progress.textContent = '✅ SAVED! Loading characters...';
+                document.getElementById('model-setup-banner').style.display = 'none';
+                const firstAvail = charData.findIndex(c => c.blobUrl);
+                if (firstAvail >= 0) selectChar(firstAvail);
+                input.value = '';
+            };
+        }
+
+        function placeModel(object) {
+            if (currentModel) scene.remove(currentModel);
+            currentModel = object;
+            const box = new THREE.Box3().setFromObject(currentModel);
+            const size = box.getSize(new THREE.Vector3()).length();
+            const center = box.getCenter(new THREE.Vector3());
+            currentModel.position.sub(center);
+            const targetSize = 4;
+            const scale = targetSize / size;
+            currentModel.scale.setScalar(scale);
+            const box2 = new THREE.Box3().setFromObject(currentModel);
+            currentModel.position.y -= box2.min.y;
+            currentModel.traverse(child => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; if (child.material) child.material.needsUpdate = true; } });
+            scene.add(currentModel);
+        }
+
+        function loadModel(path, type) {
+            if (type === 'glb') {
+                const loader = new THREE.GLTFLoader();
+                loader.load(path, (gltf) => placeModel(gltf.scene), undefined, (err) => { console.error('GLB Error:', err); showFallback(); });
+            } else {
+                const loader = new THREE.FBXLoader();
+                loader.load(path, (fbx) => placeModel(fbx), undefined, (err) => { console.error('FBX Error:', err); showFallback(); });
+            }
+        }
+
+        function showFallback() {
+            if (currentModel) scene.remove(currentModel);
+            const geometry = new THREE.BoxGeometry(1.5, 3, 1.5);
+            const material = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.8, emissive: 0x00f2ff, emissiveIntensity: 0.2 });
+            currentModel = new THREE.Mesh(geometry, material);
+            currentModel.position.y = 1.5;
+            scene.add(currentModel);
+        }
+
+        function animate() { requestAnimationFrame(animate); if (currentModel) currentModel.rotation.y += 0.01; renderer.render(scene, camera); }
+
+        function selectChar(index) {
+            selectedCharIndex = index;
+            const char = charData[index];
+            for (let i = 0; i < 3; i++) { const box = document.getElementById(`p-${i}`); if (box) box.classList.toggle('selected', i === index); }
+            document.getElementById('char-name').textContent = char.name;
+            document.getElementById('char-role').textContent = char.role;
+            document.getElementById('char-desc').textContent = char.desc;
+            document.getElementById('stat-damage').style.width = char.stats.dmg + '%';
+            document.getElementById('stat-speed').style.width = char.stats.spd + '%';
+            document.getElementById('stat-accuracy').style.width = char.stats.acc + '%';
+            document.getElementById('stat-armor').style.width = char.stats.arm + '%';
+            const lockPanel = document.getElementById('lock-panel');
+            const deployBtn = document.getElementById('deploy-btn');
+            const isLocked = char.locked && !medeaUnlocked;
+            if (isLocked) { lockPanel.classList.add('active'); deployBtn.disabled = true; deployBtn.textContent = "LOCKED"; }
+            else { lockPanel.classList.remove('active'); deployBtn.disabled = false; deployBtn.textContent = "SELECT"; }
+            const avatarEl = document.getElementById('header-avatar');
+            if (avatarEl) { const colors = ['#0088ff', '#00f2ff', '#ffcc00']; avatarEl.style.border = `2px solid ${colors[index]}`; avatarEl.style.boxShadow = `0 0 12px ${colors[index]}`; }
+            if (char.blobUrl) loadModel(char.blobUrl, char.type);
+            else loadModel(char.model, char.type);
+        }
+
+        function unlockMedea() {
+            const char = charData[2];
+            if (lobbyData.user.level < char.reqLevel) {
+                showNotification(`LVL ${char.reqLevel} REQUIRED!`, 'error');
+                return;
+            }
+            if (lobbyData.user.credits < char.price) {
+                showNotification("INSUFFICIENT CREDITS!", 'error');
+                return;
+            }
+            if (confirm(`UNLOCK ${char.name} FOR ${char.price}?`)) {
+                lobbyData.user.credits -= char.price;
+                medeaUnlocked = true;
+                document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
+                document.getElementById('p-2').classList.remove('locked');
+                showNotification("MEDEA UNLOCKED!", 'success');
+                selectChar(2);
+            }
+        }
+
+        function toggleCharacter(show) {
+            const modal = document.getElementById('char-modal');
+            modal.style.display = show ? 'block' : 'none';
+            if (show) {
+                if (!scene) { initThreeJS(); initCharacterModels(); }
+                setTimeout(() => selectChar(selectedCharIndex), 100);
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                const viewerWidth = window.innerWidth - 700;
+                camera.aspect = viewerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(viewerWidth, window.innerHeight);
+            }
+        });
+
+        function toggleSettings(show) { document.getElementById('settings-modal').style.display = show ? 'flex' : 'none'; }
+        function switchSettingsTab(event, tabId) {
+            const tabs = document.querySelectorAll('#settings-modal .tab-btn'), contents = document.querySelectorAll('#settings-modal .tab-content');
+            tabs.forEach(t => t.classList.remove('active')); contents.forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active'); document.getElementById(tabId).classList.add('active');
+        }
+        function updateSliderVal(slider) { const display = slider.parentElement.querySelector('.val-display'); if (display) display.textContent = slider.value + '%'; }
+        function applySettings(btn) {
+            const span = btn.querySelector('span');
+            span.textContent = 'SAVING...';
+            setTimeout(() => { span.textContent = 'APPLY CHANGES'; toggleSettings(false); showNotification("SETTINGS SAVED"); }, 1000);
+        }
+        window.addEventListener('click', (event) => { if (event.target == document.getElementById('settings-modal')) toggleSettings(false); });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initData();
+        });
+    </script>
+</body>
+</html>

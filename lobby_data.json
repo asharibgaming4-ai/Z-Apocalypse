@@ -1,0 +1,31 @@
+{
+  "user": {
+    "name": "HAFF",
+    "level": 42,
+    "rank": "II",
+    "exp": 45,
+    "credits": 12500,
+    "diamonds": 75,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1"
+  },
+  "missions": [
+    {
+      "id": "m1",
+      "title": "15 HEADSHOTS",
+      "progress": 12,
+      "goal": 15,
+      "type": "COMBAT",
+      "reward": 500
+    },
+    {
+      "id": "m2",
+      "title": "ESCAPE SUBWAY",
+      "progress": 0,
+      "goal": 1,
+      "type": "SURVIVAL",
+      "reward": 1200
+    }
+  ],
+  "inventory": [],
+  "medeaUnlocked": false
+}
