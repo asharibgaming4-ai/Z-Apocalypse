@@ -25,6 +25,9 @@ public class UserController : ControllerBase
         return Ok(new { 
             username = user.Username, 
             coins = user.Coins, 
+            skullTokens = user.SkullTokens,
+            level = user.Level,
+            experience = user.Experience,
             equippedWeaponId = user.EquippedWeaponId 
         });
     }

@@ -12,8 +12,8 @@ using projectaaa.Data;
 namespace projectaaa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260515073210_AddItemsTableFix")]
-    partial class AddItemsTableFix
+    [Migration("20260516071301_AddCharacterAndSkullTokens")]
+    partial class AddCharacterAndSkullTokens
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,34 @@ namespace projectaaa.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("projectaaa.Models.MapLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MapName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequiredLevel")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MapLevels");
+                });
+
             modelBuilder.Entity("projectaaa.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -65,7 +93,16 @@ namespace projectaaa.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Accuracy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
                     b.Property<int>("Coins")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Damage")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -75,9 +112,41 @@ namespace projectaaa.Migrations
                     b.Property<int?>("EquippedWeaponId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Experience")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMedeaUnlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxHealth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovementSpeed")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedCharacter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedSkin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SkullTokens")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -105,6 +174,36 @@ namespace projectaaa.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserInventories");
+                });
+
+            modelBuilder.Entity("projectaaa.Models.UserMission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CurrentProgress")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Goal")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserMissions");
                 });
 #pragma warning restore 612, 618
         }

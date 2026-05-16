@@ -5,53 +5,56 @@
 namespace projectaaa.Migrations
 {
     /// <inheritdoc />
-    public partial class AddItemsTableFix : Migration
+    public partial class AddMissionsAndCustomMaps : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "Coins",
+                name: "Experience",
                 table: "Users",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "EquippedWeaponId",
+                name: "Level",
                 table: "Users",
                 type: "int",
-                nullable: true);
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "MapLevels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<int>(type: "int", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MapName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequiredLevel = table.Column<int>(type: "int", nullable: false),
+                    Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.PrimaryKey("PK_MapLevels", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInventories",
+                name: "UserMissions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentProgress = table.Column<int>(type: "int", nullable: false),
+                    Goal = table.Column<int>(type: "int", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInventories", x => x.Id);
+                    table.PrimaryKey("PK_UserMissions", x => x.Id);
                 });
         }
 
@@ -59,17 +62,17 @@ namespace projectaaa.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Items");
+                name: "MapLevels");
 
             migrationBuilder.DropTable(
-                name: "UserInventories");
+                name: "UserMissions");
 
             migrationBuilder.DropColumn(
-                name: "Coins",
+                name: "Experience",
                 table: "Users");
 
             migrationBuilder.DropColumn(
-                name: "EquippedWeaponId",
+                name: "Level",
                 table: "Users");
         }
     }

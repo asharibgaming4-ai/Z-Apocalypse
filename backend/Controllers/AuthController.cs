@@ -20,7 +20,8 @@ public class AuthController : ControllerBase
         var user = await _authService.Authenticate(request.Username, request.Password);
         if (user == null) return Unauthorized(new { message = "Invalid credentials" });
 
-        return Ok(new { username = user.Username, email = user.Email });
+        // Ensure clear standard JSON response on success
+        return Ok(new { success = true, username = user.Username, email = user.Email });
     }
 
     [HttpPost("signup")]
@@ -29,7 +30,7 @@ public class AuthController : ControllerBase
         var user = await _authService.Register(request.Username, request.Email, request.Password);
         if (user == null) return BadRequest(new { message = "Username already taken" });
 
-        return Ok(new { username = user.Username, message = "User created successfully" });
+        return Ok(new { success = true, username = user.Username, message = "User created successfully" });
     }
 }
 

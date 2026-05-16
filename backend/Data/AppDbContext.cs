@@ -10,4 +10,6 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<UserInventory> UserInventories { get; set; }
+    public DbSet<MapLevel> MapLevels { get; set; }
+    public DbSet<UserMission> UserMissions { get; set; }
 }

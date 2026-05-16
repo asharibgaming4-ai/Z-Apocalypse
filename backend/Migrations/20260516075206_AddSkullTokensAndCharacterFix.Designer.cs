@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using projectaaa.Data;
 
@@ -11,9 +12,11 @@ using projectaaa.Data;
 namespace projectaaa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260516075206_AddSkullTokensAndCharacterFix")]
+    partial class AddSkullTokensAndCharacterFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,20 +115,10 @@ namespace projectaaa.Migrations
                     b.Property<int>("Experience")
                         .HasColumnType("int");
 
-                    b.Property<bool>("FullscreenMode")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GraphicsQuality")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsMedeaUnlocked")
                         .HasColumnType("bit");
 
                     b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MasterVolume")
                         .HasColumnType("int");
 
                     b.Property<int>("MaxHealth")
@@ -134,15 +127,9 @@ namespace projectaaa.Migrations
                     b.Property<int>("MovementSpeed")
                         .HasColumnType("int");
 
-                    b.Property<int>("MusicVolume")
-                        .HasColumnType("int");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RenderScale")
-                        .HasColumnType("int");
 
                     b.Property<string>("SelectedCharacter")
                         .IsRequired()
@@ -151,9 +138,6 @@ namespace projectaaa.Migrations
                     b.Property<string>("SelectedSkin")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SfxVolume")
-                        .HasColumnType("int");
 
                     b.Property<int>("SkullTokens")
                         .HasColumnType("int");

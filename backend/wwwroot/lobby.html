@@ -8,10 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&family=Orbitron:wght@400;900&display=swap"
         rel="stylesheet">
     <!-- Three.js for 3D Character Preview -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Three.js for 3D Character Preview -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         :root {
             --neon-red: #ff0000;
@@ -490,7 +491,7 @@
             backdrop-filter: blur(10px);
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 5px 20px rgba(0, 0, 0, 0.5);
             transition: 0.3s;
-            max-height: 190px;
+            /* max-height removed to allow dynamic content */
         }
 
         .panel-box::before {
@@ -611,53 +612,16 @@
 
         .shop-subtext {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #ffda44;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 5px;
-        }
-
-        /* Shop Slots */
-        .shop-slots {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .slot {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 4px;
-            text-align: center;
-            transition: 0.4s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .slot:hover {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: var(--neon-red);
-            transform: scale(1.05);
-        }
-
-        .item-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 6px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 1));
-        }
-
-        .price-tag {
-            font-size: 0.65rem;
-            color: #888;
-            text-transform: uppercase;
-            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
         }
 
         .price-val {
@@ -2118,7 +2082,7 @@
 
     <header class="game-header">
         <div class="header-left">
-            <div class="back-btn" onclick="window.location.href='index.html'">
+            <div class="back-btn" id="lobby-back-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                 </svg>
@@ -2176,6 +2140,16 @@
                     <span class="res-val" id="header-diamonds">75</span>
                 </div>
                 <span class="res-label">Cyber Diamonds</span>
+            </div>
+            <div class="res-box">
+                <div class="res-line">
+                    <!-- Skull Icon -->
+                    <svg viewBox="0 0 24 24" fill="#ff4444">
+                        <path d="M12 2C8.69 2 6 4.69 6 8C6 11.31 8.69 14 12 14C15.31 14 18 11.31 18 8C18 4.69 15.31 2 12 2M12 12C9.79 12 8 10.21 8 8C8 5.79 9.79 4 12 4C14.21 4 16 5.79 16 8C16 10.21 14.21 12 12 12M12 16C7.58 16 4 19.58 4 24H20C20 19.58 16.42 16 12 16M12 18C14.21 18 16 19.79 16 22H8C8 19.79 9.79 18 12 18Z" />
+                    </svg>
+                    <span class="res-val" id="header-tokens">10</span>
+                </div>
+                <span class="res-label">Skull Tokens</span>
             </div>
             <div class="control-btns">
                 <div class="ctrl-item" onclick="toggleSettings(true)">
@@ -2235,14 +2209,9 @@
                 <div id="char-3d-container"></div>
                 <div class="rotating-stage"></div>
 
-                <!-- Setup banner if needed -->
-                <div class="model-setup-banner" id="model-setup-banner"
-                    style="position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 300px; padding: 20px;">
-                    <h3 style="font-size: 0.8rem;">⚡ LOAD MODELS</h3>
-                    <p style="font-size: 0.6rem; color: #666; margin: 10px 0;">Select 3 models from assets folder</p>
-                    <button class="setup-load-btn" onclick="document.getElementById('model-upload').click()"
-                        style="padding: 10px; font-size: 0.7rem;">CHOOSE FILES</button>
-                    <div class="setup-progress" id="setup-progress">SAVING...</div>
+                <!-- Loading Overlay -->
+                <div class="model-loading-overlay" id="model-loading-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; font-family: 'Orbitron'; font-size: 0.8rem; color: #39ff14; text-shadow: 0 0 10px #39ff14;">
+                    LOADING SURVIVOR MODEL...
                 </div>
             </div>
 
@@ -2330,7 +2299,7 @@
         </div>
 
         <!-- SURVIVAL MISSIONS -->
-        <div class="panel-box mission-panel" style="margin-top: 15px;">
+        <div class="panel-box mission-panel">
             <div class="distress-border"></div>
             <div class="panel-header" style="justify-content: flex-start; margin-bottom: 10px;">
                 <span class="panel-title"
@@ -2409,15 +2378,15 @@
             <div class="tab-content active" id="audio">
                 <div class="setting-row">
                     <label>MASTER VOLUME <span class="val-display">80%</span></label>
-                    <input type="range" min="0" max="100" value="80" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-master-vol" min="0" max="100" value="80" oninput="updateSliderVal(this)">
                 </div>
                 <div class="setting-row">
                     <label>MUSIC VOLUME <span class="val-display">60%</span></label>
-                    <input type="range" min="0" max="100" value="60" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-music-vol" min="0" max="100" value="60" oninput="updateSliderVal(this)">
                 </div>
                 <div class="setting-row">
                     <label>SFX VOLUME <span class="val-display">90%</span></label>
-                    <input type="range" min="0" max="100" value="90" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-sfx-vol" min="0" max="100" value="90" oninput="updateSliderVal(this)">
                 </div>
             </div>
 
@@ -2425,23 +2394,23 @@
             <div class="tab-content" id="graphics">
                 <div class="setting-row">
                     <label>GRAPHICS QUALITY</label>
-                    <select>
-                        <option>LOW</option>
-                        <option>MEDIUM</option>
-                        <option>HIGH</option>
-                        <option selected>ULTRA</option>
+                    <select id="set-graphics-quality">
+                        <option value="Low">LOW</option>
+                        <option value="Medium">MEDIUM</option>
+                        <option value="High">HIGH</option>
+                        <option value="Ultra" selected>ULTRA</option>
                     </select>
                 </div>
                 <div class="setting-row" style="display: flex; justify-content: space-between; align-items: center;">
                     <label style="margin-bottom: 0;">FULLSCREEN MODE</label>
                     <label class="switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="set-fullscreen" checked>
                         <span class="slider-toggle"></span>
                     </label>
                 </div>
                 <div class="setting-row">
                     <label>RENDER SCALE <span class="val-display">100%</span></label>
-                    <input type="range" min="50" max="150" value="100" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-render-scale" min="50" max="150" value="100" oninput="updateSliderVal(this)">
                 </div>
             </div>
 
@@ -2486,18 +2455,15 @@
 
         let lobbyData = {
             user: {
-                name: localStorage.getItem('lastSurvivor') || "HAFF",
+                name: localStorage.getItem('loggedInUser') || localStorage.getItem('lastSurvivor') || "HAFF",
                 credits: 0,
+                tokens: 0,
                 level: 1,
                 rank: "ROOKIE",
                 exp: 45,
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1"
             },
-            missions: [
-                { id: "m1", title: "15 HEADSHOTS", progress: 12, goal: 15 },
-                { id: "m2", title: "SURVIVE Z-WAVE", progress: 0, goal: 1 },
-                { id: "m3", title: "LOOT 10 MEDKITS", progress: 2, goal: 10 }
-            ]
+            missions: []
         };
 
         let weapons = [];
@@ -2507,13 +2473,22 @@
         let activeTab = 'weapons';
 
         async function initData() {
-            const username = lobbyData.user.name;
+            const username = localStorage.getItem('loggedInUser') || localStorage.getItem('lastSurvivor');
+            if (!username) {
+                window.location.replace('index.html');
+                return;
+            }
+            lobbyData.user.name = username;
+            
             try {
                 // Fetch Profile
                 const profileRes = await fetch(`http://localhost:5100/api/user/profile/${username}`);
                 if (profileRes.ok) {
                     const profile = await profileRes.json();
                     lobbyData.user.credits = profile.coins;
+                    lobbyData.user.tokens = profile.skullTokens;
+                    lobbyData.user.level = profile.level;
+                    lobbyData.user.exp = profile.experience;
                     lobbyData.user.equippedWeaponId = profile.equippedWeaponId;
                 }
 
@@ -2521,9 +2496,55 @@
                 const storeRes = await fetch('http://localhost:5100/api/store/items');
                 if (storeRes.ok) {
                     const allItems = await storeRes.json();
-                    console.log("Store Items:", allItems);
                     weapons = allItems.filter(i => i.category === 'Weapon');
                     survivalItems = allItems.filter(i => i.category === 'Survival');
+                }
+
+                // Fetch Missions
+                try {
+                    const missionRes = await fetch(`http://localhost:5100/api/missions/${username}`);
+                    if (missionRes.ok) {
+                        const mList = await missionRes.json();
+                        if (mList && mList.length > 0) {
+                            lobbyData.missions = mList.map(m => ({
+                                id: m.id,
+                                title: m.title,
+                                progress: m.currentProgress,
+                                goal: m.goal
+                            }));
+                        } else {
+                            useDefaultMissions();
+                        }
+                    } else {
+                        useDefaultMissions();
+                    }
+                } catch (e) {
+                    useDefaultMissions();
+                }
+
+                // Fetch Map Levels
+                try {
+                    const mapsRes = await fetch(`http://localhost:5100/api/progress/maps/${username}`);
+                    if (mapsRes.ok) {
+                        const maps = await mapsRes.json();
+                        if (maps && maps.length > 0) {
+                            const diffMap = { "Easy": 1, "Normal": 2, "Medium": 3, "Hard": 4, "Expert": 5 };
+                            levelsData = maps.map(m => ({
+                                name: m.mapName,
+                                diff: diffMap[m.difficulty] || 1,
+                                diffLabel: m.difficulty,
+                                img: m.imageUrl,
+                                reqLevel: m.requiredLevel,
+                                isUnlocked: m.isUnlocked
+                            }));
+                        } else {
+                            useDefaultMaps();
+                        }
+                    } else {
+                        useDefaultMaps();
+                    }
+                } catch (e) {
+                    useDefaultMaps();
                 }
 
                 // Fetch Inventory
@@ -2535,7 +2556,26 @@
             }
 
             renderLobbyData();
-            updateLobbySlots();
+            renderLobbySlots();
+            updateStartButton();
+        }
+
+        function useDefaultMissions() {
+            lobbyData.missions = [
+                { id: "m1", title: "15 HEADSHOTS", progress: 12, goal: 15 },
+                { id: "m2", title: "SURVIVE Z-WAVE", progress: 0, goal: 1 },
+                { id: "m3", title: "LOOT 10 MEDKITS", progress: 2, goal: 10 }
+            ];
+        }
+
+        function useDefaultMaps() {
+            levelsData = [
+                { name: "Training Camp", diff: 1, diffLabel: "Easy", img: "assets/level 1.png", reqLevel: 1, isUnlocked: true },
+                { name: "The Dark Tunnel", diff: 2, diffLabel: "Normal", img: "assets/level 2.png", reqLevel: 5, isUnlocked: false },
+                { name: "Cargo Yard", diff: 3, diffLabel: "Medium", img: "assets/level 3.png", reqLevel: 10, isUnlocked: false },
+                { name: "Parking Lot", diff: 4, diffLabel: "Hard", img: "assets/level 4.png", reqLevel: 20, isUnlocked: false },
+                { name: "The Rooftop", diff: 5, diffLabel: "Expert", img: "assets/level 5.png", reqLevel: 35, isUnlocked: false }
+            ];
         }
 
         async function fetchInventory() {
@@ -2550,6 +2590,7 @@
         function renderLobbyData() {
             document.getElementById('header-user').textContent = lobbyData.user.name.toUpperCase();
             document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
+            document.getElementById('header-tokens').textContent = (lobbyData.user.tokens || 0).toLocaleString();
             document.getElementById('header-avatar').src = lobbyData.user.avatar;
             
             const missionContainer = document.getElementById('mission-list-container');
@@ -2702,6 +2743,48 @@
             });
         }
 
+        // --- Lobby Slider Logic ---
+        let lobbyStartIdx = 0;
+        const LOBBY_VISIBLE_COUNT = 3; // number of items shown in the small slider
+        function renderLobbySlots() {
+            const container = document.getElementById('lobby-slots');
+            if (!container) return;
+            container.innerHTML = '';
+            const items = weapons; // show weapons in the lobby slider
+            if (!items || items.length === 0) return;
+            for (let i = 0; i < LOBBY_VISIBLE_COUNT; i++) {
+                const idx = (lobbyStartIdx + i) % items.length;
+                const w = items[idx];
+                const slot = document.createElement('div');
+                slot.className = 'slot';
+                // Apply dynamic border color from item data (match screenshot rarity)
+                if (w.color) {
+                    slot.style.borderColor = w.color;
+                    slot.style.boxShadow = `inset 0 0 10px ${w.color}44`;
+                }
+                slot.innerHTML = `
+                    <div class="item-icon" style="background-image: url('${w.imageUrl}'); width: 80%; height: 80%; margin: auto;"></div>
+                    <div class="lock-icon" style="position: absolute; top: 5px; right: 5px; font-size: 10px; opacity: 0.6;">🔒</div>
+                `;
+                slot.onclick = () => {
+                    toggleShop(true);
+                    if (activeTab !== 'weapons') switchShopTab('weapons');
+                };
+                container.appendChild(slot);
+            }
+        }
+
+        function navWeapons(direction) {
+            const total = weapons.length;
+            if (total === 0) return;
+            lobbyStartIdx = (lobbyStartIdx + direction) % total;
+            if (lobbyStartIdx < 0) lobbyStartIdx += total;
+            renderLobbySlots();
+        }
+
+        // Optional auto‑slide every 5 seconds
+        setInterval(() => navWeapons(1), 5000);
+
         function saveLobbyData() {
             // This was used for local storage, now we use specific API calls
             console.log("Lobby data synced via APIs");
@@ -2710,18 +2793,28 @@
         async function saveCharacter() {
             const username = lobbyData.user.name;
             const selectedChar = charData[selectedCharIndex].name;
-            localStorage.setItem('selectedRole', selectedChar);
-            showNotification(`${selectedChar} DEPLOYED!`, 'success');
-            toggleCharacter(false);
+            
+            try {
+                const res = await fetch('http://localhost:5100/api/character/update-skin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, newSkin: selectedChar })
+                });
+                
+                if (res.ok) {
+                    localStorage.setItem('selectedRole', selectedChar);
+                    localStorage.setItem('activeCharacter', selectedChar); // Game trigger
+                    showNotification(`${selectedChar} DEPLOYED!`, 'success');
+                    toggleCharacter(false);
+                } else {
+                    showNotification("FAILED TO SAVE CHARACTER", 'error');
+                }
+            } catch (err) {
+                showNotification("CONNECTION ERROR", 'error');
+            }
         }
 
-        const levelsData = [
-            { name: "Training Camp", diff: 1, diffLabel: "Easy", img: "assets/level 1.png", reqLevel: 1 },
-            { name: "The Dark Tunnel", diff: 2, diffLabel: "Normal", img: "assets/level 2.png", reqLevel: 5 },
-            { name: "Cargo Yard", diff: 3, diffLabel: "Medium", img: "assets/level 3.png", reqLevel: 10 },
-            { name: "Parking Lot", diff: 4, diffLabel: "Hard", img: "assets/level 4.png", reqLevel: 20 },
-            { name: "The Rooftop", diff: 5, diffLabel: "Expert", img: "assets/level 5.png", reqLevel: 35 }
-        ];
+        let levelsData = [];
 
         function toggleLevels(show) {
             const modal = document.getElementById('levels-modal');
@@ -2732,21 +2825,41 @@
         function fillLevelsGrid() {
             const grid = document.getElementById('levels-grid');
             grid.innerHTML = '';
+            const selectedMap = localStorage.getItem('selectedMap') || "Training Camp";
             levelsData.forEach((lv, i) => {
-                const isLocked = lobbyData.user.level < lv.reqLevel;
+                const isLocked = false; // Bypassed for layout testing
+                const isSelected = lv.name === selectedMap;
                 const card = document.createElement('div');
-                card.className = `level-card ${isLocked ? 'locked' : ''}`;
+                card.className = `level-card ${isSelected ? 'selected' : ''}`;
+                if (isSelected) {
+                    card.style.borderColor = "#39ff14";
+                    card.style.boxShadow = "0 0 15px rgba(57, 255, 20, 0.4)";
+                }
                 let stars = '';
                 for (let j = 0; j < 5; j++) stars += `<span style="color: ${j < lv.diff ? '#ffaa00' : '#333'}">★</span>`;
                 card.innerHTML = `
-                    ${isLocked ? `<div class="lock-overlay"><svg class="lock-icon-lg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2 2 2 0 002 2m6-9h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2m-6-6a3 3 0 013 3v2H9V5a3 3 0 013-3z"/></svg><div style="font-size:0.8rem; margin-top:5px;">REQ LVL ${lv.reqLevel}</div></div>` : ''}
                     <div class="level-img-box"><img src="${lv.img}" class="level-img"></div>
                     <div class="level-name">${lv.name}</div>
                     <div class="level-diff"><span>Difficulty: ${lv.diffLabel}</span><div style="margin-left: auto;">${stars}</div></div>
                 `;
-                if (!isLocked) card.onclick = () => showNotification(`Starting ${lv.name}...`);
+                card.onclick = () => selectMap(lv.name);
                 grid.appendChild(card);
             });
+        }
+
+        function selectMap(name) {
+            localStorage.setItem('selectedMap', name);
+            fillLevelsGrid();
+            updateStartButton();
+            showNotification(`MAP SELECTED: ${name.toUpperCase()}`, 'success');
+        }
+
+        function updateStartButton() {
+            const btnSpan = document.querySelector('.start-btn span');
+            if (btnSpan) {
+                const currentMap = localStorage.getItem('selectedMap') || "Training Camp";
+                btnSpan.textContent = `START: ${currentMap.toUpperCase()}`;
+            }
         }
 
         const charData = [
@@ -2764,7 +2877,7 @@
                 role: "SHADOW OPERATIVE",
                 desc: "A mysterious phantom from the old world. Unmatched speed and tactical superiority. He strikes from the darkness and vanishes before the undead even notice.",
                 stats: { dmg: 70, spd: 95, acc: 80, arm: 40 },
-                model: "assets/hunter.fbx",
+                model: "assets/Remy.fbx", // Using Remy as fallback since hunter.fbx is missing
                 type: "fbx",
                 locked: false
             },
@@ -2823,14 +2936,8 @@
         async function dbGet(key) { const db = await openDB(); return new Promise((res, rej) => { const t = db.transaction(STORE, 'readonly'); const r = t.objectStore(STORE).get(key); r.onsuccess = () => res(r.result); r.onerror = rej; }); }
 
         async function initCharacterModels() {
-            let allReady = true;
-            for (let i = 0; i < charData.length; i++) {
-                const blob = await dbGet(charData[i].name);
-                if (blob) charData[i].blobUrl = URL.createObjectURL(blob);
-                else allReady = false;
-            }
-            if (allReady) selectChar(0);
-            else document.getElementById('model-setup-banner').style.display = 'flex';
+            // Bypass manual upload and load from assets folder directly
+            selectChar(0);
         }
 
         function setupFileUpload() {
@@ -2871,12 +2978,50 @@
         }
 
         function loadModel(path, type) {
-            if (type === 'glb') {
-                const loader = new THREE.GLTFLoader();
-                loader.load(path, (gltf) => placeModel(gltf.scene), undefined, (err) => { console.error('GLB Error:', err); showFallback(); });
-            } else {
-                const loader = new THREE.FBXLoader();
-                loader.load(path, (fbx) => placeModel(fbx), undefined, (err) => { console.error('FBX Error:', err); showFallback(); });
+            // Fix path and encoding
+            const finalPath = path.replace(/ /g, '%20');
+            const overlay = document.getElementById('model-loading-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                overlay.textContent = `LOADING: ${finalPath.split('/').pop().toUpperCase()}...`;
+            }
+
+            console.log("ATTEMPTING TO LOAD:", finalPath);
+
+            const onLoad = (object) => {
+                if (overlay) overlay.style.display = 'none';
+                console.log("LOAD SUCCESS:", finalPath);
+                placeModel(object);
+            };
+
+            const onError = (err) => {
+                if (overlay) overlay.style.display = 'none';
+                console.error('3D LOAD ERROR:', err, 'FAILED PATH:', finalPath);
+                
+                // Fallback logic
+                if (finalPath !== "assets/Remy.fbx") {
+                    console.log("FALLING BACK TO REMY.FBX");
+                    loadModel("assets/Remy.fbx", "fbx");
+                } else {
+                    showFallback();
+                }
+            };
+
+            try {
+                if (type === 'glb' || finalPath.toLowerCase().endsWith('.glb')) {
+                    const loader = new THREE.GLTFLoader();
+                    loader.load(finalPath, (gltf) => onLoad(gltf.scene), undefined, onError);
+                } else {
+                    const loader = new THREE.FBXLoader();
+                    // Ensure loader can find fflate if needed
+                    if (window.fflate) {
+                        // Some versions require this
+                    }
+                    loader.load(finalPath, onLoad, undefined, onError);
+                }
+            } catch (e) {
+                console.error("LOADER CRASHED:", e);
+                onError(e);
             }
         }
 
@@ -2913,32 +3058,64 @@
             else loadModel(char.model, char.type);
         }
 
-        function unlockMedea() {
+        async function unlockMedea() {
+            const username = lobbyData.user.name;
             const char = charData[2];
-            if (lobbyData.user.level < char.reqLevel) {
-                showNotification(`LVL ${char.reqLevel} REQUIRED!`, 'error');
-                return;
-            }
-            if (lobbyData.user.credits < char.price) {
-                showNotification("INSUFFICIENT CREDITS!", 'error');
-                return;
-            }
-            if (confirm(`UNLOCK ${char.name} FOR ${char.price}?`)) {
-                lobbyData.user.credits -= char.price;
-                medeaUnlocked = true;
-                document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
-                document.getElementById('p-2').classList.remove('locked');
-                showNotification("MEDEA UNLOCKED!", 'success');
-                selectChar(2);
+            
+            try {
+                const res = await fetch('http://localhost:5100/api/character/unlock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, characterName: char.name })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    medeaUnlocked = true;
+                    showNotification("CHARACTER UNLOCKED!", 'success');
+                    await fetchCharacterData();
+                    selectChar(2);
+                } else {
+                    showNotification(data.message || "UNLOCK FAILED", 'error');
+                }
+            } catch (err) {
+                showNotification("CONNECTION ERROR", 'error');
             }
         }
 
-        function toggleCharacter(show) {
+        async function toggleCharacter(show) {
             const modal = document.getElementById('char-modal');
             modal.style.display = show ? 'block' : 'none';
             if (show) {
+                await fetchCharacterData();
                 if (!scene) { initThreeJS(); initCharacterModels(); }
                 setTimeout(() => selectChar(selectedCharIndex), 100);
+            }
+        }
+
+        async function fetchCharacterData() {
+            const username = lobbyData.user.name;
+            try {
+                const res = await fetch(`http://localhost:5100/api/character/status/${username}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    medeaUnlocked = data.isMedeaUnlocked;
+                    
+                    const lockMsg = document.getElementById('lock-msg');
+                    if (lockMsg) lockMsg.textContent = `LOCKED: REACH LEVEL 3 + 5,000 SKULL TOKENS (BALANCE: ${data.skullTokens})`;
+                    
+                    const index = charData.findIndex(c => c.name.toUpperCase() === data.selectedCharacter.toUpperCase());
+                    if (index !== -1) selectedCharIndex = index;
+                    
+                    if (data.stats) {
+                        charData[selectedCharIndex].stats.dmg = data.stats.damage;
+                        charData[selectedCharIndex].stats.spd = data.stats.speed;
+                        charData[selectedCharIndex].stats.acc = data.stats.accuracy;
+                        charData[selectedCharIndex].stats.arm = data.stats.armor;
+                    }
+                }
+            } catch (err) {
+                console.error("Character sync error:", err);
             }
         }
 
@@ -2951,22 +3128,96 @@
             }
         });
 
-        function toggleSettings(show) { document.getElementById('settings-modal').style.display = show ? 'flex' : 'none'; }
+        async function toggleSettings(show) { 
+            const modal = document.getElementById('settings-modal');
+            modal.style.display = show ? 'flex' : 'none'; 
+            if (show) await fetchSettings();
+        }
+
+        async function fetchSettings() {
+            const username = lobbyData.user.name;
+            try {
+                const res = await fetch(`http://localhost:5100/api/settings/${username}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('set-master-vol').value = data.masterVolume;
+                    document.getElementById('set-music-vol').value = data.musicVolume;
+                    document.getElementById('set-sfx-vol').value = data.sfxVolume;
+                    document.getElementById('set-graphics-quality').value = data.graphicsQuality;
+                    document.getElementById('set-fullscreen').checked = data.fullscreenMode;
+                    document.getElementById('set-render-scale').value = data.renderScale;
+                    
+                    // Update value displays
+                    document.querySelectorAll('#settings-modal .val-display').forEach(span => {
+                        const slider = span.parentElement.parentElement.querySelector('input[type="range"]');
+                        if (slider) span.textContent = slider.value + '%';
+                    });
+                }
+            } catch (err) {
+                console.error("Settings fetch error:", err);
+            }
+        }
+
         function switchSettingsTab(event, tabId) {
             const tabs = document.querySelectorAll('#settings-modal .tab-btn'), contents = document.querySelectorAll('#settings-modal .tab-content');
             tabs.forEach(t => t.classList.remove('active')); contents.forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active'); document.getElementById(tabId).classList.add('active');
         }
+
         function updateSliderVal(slider) { const display = slider.parentElement.querySelector('.val-display'); if (display) display.textContent = slider.value + '%'; }
-        function applySettings(btn) {
+
+        async function applySettings(btn) {
             const span = btn.querySelector('span');
+            const originalText = span.textContent;
             span.textContent = 'SAVING...';
-            setTimeout(() => { span.textContent = 'APPLY CHANGES'; toggleSettings(false); showNotification("SETTINGS SAVED"); }, 1000);
+            
+            const username = lobbyData.user.name;
+            const settings = {
+                username,
+                masterVolume: parseInt(document.getElementById('set-master-vol').value),
+                musicVolume: parseInt(document.getElementById('set-music-vol').value),
+                sfxVolume: parseInt(document.getElementById('set-sfx-vol').value),
+                graphicsQuality: document.getElementById('set-graphics-quality').value,
+                fullscreenMode: document.getElementById('set-fullscreen').checked,
+                renderScale: parseInt(document.getElementById('set-render-scale').value)
+            };
+
+            try {
+                const res = await fetch('http://localhost:5100/api/settings/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                
+                if (res.ok) {
+                    showNotification("SETTINGS SAVED");
+                    setTimeout(() => toggleSettings(false), 500);
+                } else {
+                    showNotification("FAILED TO SAVE SETTINGS", 'error');
+                }
+            } catch (err) {
+                showNotification("CONNECTION ERROR", 'error');
+            } finally {
+                setTimeout(() => { span.textContent = originalText; }, 500);
+            }
+        }
+        function logoutUser() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
         }
         window.addEventListener('click', (event) => { if (event.target == document.getElementById('settings-modal')) toggleSettings(false); });
         
         document.addEventListener('DOMContentLoaded', () => {
             initData();
+
+            // Force fix for back button
+            const backBtn = document.getElementById('lobby-back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.href = 'index.html';
+                });
+            }
         });
     </script>
 </body>
