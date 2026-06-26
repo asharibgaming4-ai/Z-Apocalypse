@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using projectaaa.Data;
 
@@ -11,9 +12,11 @@ using projectaaa.Data;
 namespace projectaaa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260609051000_AddSurvivalMissionsAndLevelReset")]
+    partial class AddSurvivalMissionsAndLevelReset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,45 +83,6 @@ namespace projectaaa.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MapLevels");
-                });
-
-            modelBuilder.Entity("projectaaa.Models.SurvivalSession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CoinsCollected")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DiamondsCollected")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Kills")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MapName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PlayedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SurvivalTimeSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Survived")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SurvivalSessions");
                 });
 
             modelBuilder.Entity("projectaaa.Models.User", b =>

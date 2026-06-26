@@ -18,13 +18,13 @@ public class User
 
     public int Coins { get; set; } = 10000;
     public int SkullTokens { get; set; } = 10;
-    public int Level { get; set; } = 42;
+    public int Level { get; set; } = 1;
     public int Experience { get; set; } = 0;
     public int? EquippedWeaponId { get; set; }
 
     // Character info
-    public string SelectedCharacter { get; set; } = "REMY";
-    public bool IsMedeaUnlocked { get; set; } = false;
+    public string SelectedCharacter { get; set; } = "GASMASK";
+    public bool IsMedeaUnlocked { get; set; } = true;
 
     // Stats
     public int Damage { get; set; } = 85;
@@ -43,7 +43,7 @@ public class User
     public int RenderScale { get; set; } = 100;
 
     // Backward compatibility
-    public string SelectedSkin { get; set; } = "REMY";
+    public string SelectedSkin { get; set; } = "GASMASK";
     public int MaxHealth { get; set; } = 100;
     public int MovementSpeed { get; set; } = 10;
     public int Stamina { get; set; } = 100;

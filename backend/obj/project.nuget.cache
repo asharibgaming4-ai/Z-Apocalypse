@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oX+Sztq2B6E=",
+  "dgSpecHash": "ldokeYecdKo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+  "projectFilePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\J A C0mputers\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\J A C0mputers\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
@@ -57,9 +57,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Azure.Identity' 1.7.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-5mfx-4wcx-rv27",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "Azure.Identity",
       "targetGraphs": [
         "net10.0"
@@ -69,9 +69,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'Azure.Identity' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "Azure.Identity",
       "targetGraphs": [
         "net10.0"
@@ -81,9 +81,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'Azure.Identity' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-wvxc-855f-jvrv",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "Azure.Identity",
       "targetGraphs": [
         "net10.0"
@@ -93,9 +93,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.Data.SqlClient' 5.1.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-98g6-xh36-x2p7",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "Microsoft.Data.SqlClient",
       "targetGraphs": [
         "net10.0"
@@ -105,9 +105,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'Microsoft.IdentityModel.JsonWebTokens' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "Microsoft.IdentityModel.JsonWebTokens",
       "targetGraphs": [
         "net10.0"
@@ -117,9 +117,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
-      "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+      "filePath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
       "libraryId": "System.IdentityModel.Tokens.Jwt",
       "targetGraphs": [
         "net10.0"

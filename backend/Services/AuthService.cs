@@ -25,19 +25,24 @@ public class AuthService
             
             if (user != null)
             {
-                // DEBUG LOGGING
-                Console.WriteLine($"[DEBUG] DB PasswordHash: '{user.PasswordHash}' | Input Password: '{password}'");
+                bool isValid = false;
 
-                // Double-Layer Match: Check plain text OR BCrypt hash
-                bool isValid = (user.PasswordHash == password.Trim());
+                // First try BCrypt verification (for already-hashed passwords)
+                try {
+                    isValid = BCrypt.Net.BCrypt.Verify(password.Trim(), user.PasswordHash);
+                } catch {
+                    // If BCrypt fails, it means the stored password is plain text (legacy)
+                }
 
-                if (!isValid)
+                // Fallback: check plain text match (for legacy/seed data passwords)
+                if (!isValid && user.PasswordHash == password.Trim())
                 {
-                    try {
-                        isValid = BCrypt.Net.BCrypt.Verify(password.Trim(), user.PasswordHash);
-                    } catch {
-                        // Ignore verify errors for plain text entries
-                    }
+                    isValid = true;
+
+                    // Migrate: Re-hash the plain text password to BCrypt
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password.Trim());
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"[AUTH] Migrated plain-text password to BCrypt for user: {user.Username}");
                 }
 
                 if (isValid) return user;
@@ -57,12 +62,14 @@ public class AuthService
             if (await _context.Users.AnyAsync(u => u.Username.ToLower() == username.ToLower().Trim()))
                 return null;
 
-            // Save raw password directly for absolute robustness during dev testing
+            // Hash the password with BCrypt before storing
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password.Trim());
+
             var user = new User
             {
                 Username = username.Trim(),
                 Email = email.Trim(),
-                PasswordHash = password.Trim() 
+                PasswordHash = hashedPassword
             };
 
             _context.Users.Add(user);
@@ -76,3 +83,4 @@ public class AuthService
         }
     }
 }
+

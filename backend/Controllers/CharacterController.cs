@@ -22,11 +22,17 @@ public class CharacterController : ControllerBase
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null) return NotFound(new { message = "User not found" });
 
+        if (!user.IsMedeaUnlocked)
+        {
+            user.IsMedeaUnlocked = true;
+            await _context.SaveChangesAsync();
+        }
+
         return Ok(new
         {
             selectedCharacter = user.SelectedCharacter,
             skullTokens = user.SkullTokens,
-            isMedeaUnlocked = user.IsMedeaUnlocked,
+            isMedeaUnlocked = true,
             stats = new
             {
                 damage = user.Damage,
@@ -68,7 +74,8 @@ public class CharacterController : ControllerBase
         // Update stats based on selection (demo logic)
         if (request.NewSkin.ToUpper() == "REMY") { user.Damage = 85; user.Speed = 40; user.Accuracy = 65; user.Armor = 90; }
         else if (request.NewSkin.ToUpper() == "HUNTER") { user.Damage = 70; user.Speed = 95; user.Accuracy = 80; user.Armor = 40; }
-        else if (request.NewSkin.ToUpper() == "MEDEA") { user.Damage = 50; user.Speed = 80; user.Accuracy = 60; user.Armor = 45; }
+        else if (request.NewSkin.ToUpper() == "MEDEA" || request.NewSkin.ToUpper() == "ALIENSOLDIER" || request.NewSkin.ToUpper() == "ALIEN_SOLDIER") { user.Damage = 50; user.Speed = 80; user.Accuracy = 60; user.Armor = 45; }
+        else if (request.NewSkin.ToUpper() == "GASMASK") { user.Damage = 60; user.Speed = 70; user.Accuracy = 75; user.Armor = 50; }
 
         await _context.SaveChangesAsync();
 

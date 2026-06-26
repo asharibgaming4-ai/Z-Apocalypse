@@ -12,4 +12,5 @@ public class AppDbContext : DbContext
     public DbSet<UserInventory> UserInventories { get; set; }
     public DbSet<MapLevel> MapLevels { get; set; }
     public DbSet<UserMission> UserMissions { get; set; }
+    public DbSet<SurvivalSession> SurvivalSessions { get; set; }
 }

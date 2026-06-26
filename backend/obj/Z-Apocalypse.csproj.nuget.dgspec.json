@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj": {}
+    "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj": {}
   },
   "projects": {
-    "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj": {
+    "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+        "projectUniqueName": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
         "projectName": "Z-Apocalypse",
-        "projectPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\Z-Apocalypse.csproj",
+        "projectPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\Z-Apocalypse.csproj",
         "packagesPath": "C:\\Users\\J A C0mputers\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\J A C0mputers\\Documents\\GitHub\\projectaaa\\backend\\obj\\",
+        "outputPath": "C:\\Users\\J A C0mputers\\Downloads\\projectaaa22 (2)\\projectaaa22 (2)\\projectaaa22\\projectaaa\\projectaaa\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\J A C0mputers\\AppData\\Roaming\\NuGet\\NuGet.Config"

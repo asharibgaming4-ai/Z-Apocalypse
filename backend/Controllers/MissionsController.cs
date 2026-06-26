@@ -23,18 +23,38 @@ public class MissionsController : ControllerBase
             .Where(m => m.Username == username)
             .ToListAsync();
             
-        if (!missions.Any())
+        bool needsMigration = missions.Any(m => m.Title == "15 HEADSHOTS" || m.Title == "SURVIVE Z-WAVE" || m.Title == "LOOT 10 MEDKITS");
+        
+        if (!missions.Any() || needsMigration)
         {
-            // Auto-initialize default missions for new users
-            var defaults = new List<UserMission>
+            if (needsMigration)
             {
-                new UserMission { Username = username, Title = "15 HEADSHOTS", CurrentProgress = 12, Goal = 15 },
-                new UserMission { Username = username, Title = "SURVIVE Z-WAVE", CurrentProgress = 0, Goal = 1 },
-                new UserMission { Username = username, Title = "LOOT 10 MEDKITS", CurrentProgress = 2, Goal = 10 }
-            };
-            _context.UserMissions.AddRange(defaults);
-            await _context.SaveChangesAsync();
-            return Ok(defaults);
+                var oldMissions = missions.Where(m => m.Title == "15 HEADSHOTS" || m.Title == "SURVIVE Z-WAVE" || m.Title == "LOOT 10 MEDKITS");
+                _context.UserMissions.RemoveRange(oldMissions);
+                await _context.SaveChangesAsync();
+            }
+
+            var existingNew = await _context.UserMissions
+                .Where(m => m.Username == username && (m.Title == "SURVIVAL TIME" || m.Title == "TOTAL KILLS" || m.Title == "COLLECTED COINS"))
+                .ToListAsync();
+
+            var defaults = new List<UserMission>();
+            if (!existingNew.Any(m => m.Title == "SURVIVAL TIME"))
+                defaults.Add(new UserMission { Username = username, Title = "SURVIVAL TIME", CurrentProgress = 0, Goal = 180 });
+            if (!existingNew.Any(m => m.Title == "TOTAL KILLS"))
+                defaults.Add(new UserMission { Username = username, Title = "TOTAL KILLS", CurrentProgress = 0, Goal = 50 });
+            if (!existingNew.Any(m => m.Title == "COLLECTED COINS"))
+                defaults.Add(new UserMission { Username = username, Title = "COLLECTED COINS", CurrentProgress = 0, Goal = 1000 });
+
+            if (defaults.Any())
+            {
+                _context.UserMissions.AddRange(defaults);
+                await _context.SaveChangesAsync();
+            }
+
+            missions = await _context.UserMissions
+                .Where(m => m.Username == username)
+                .ToListAsync();
         }
             
         return Ok(missions);

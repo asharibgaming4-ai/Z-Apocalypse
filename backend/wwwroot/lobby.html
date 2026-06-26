@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Z-APOCALYPSE | SURVIVAL LOBBY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&family=Orbitron:wght@400;900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&family=Orbitron:wght@400;900&display=swap"
         rel="stylesheet">
     <!-- Three.js for 3D Character Preview -->
     <!-- Three.js for 3D Character Preview -->
@@ -13,6 +14,7 @@
     <script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         :root {
             --neon-red: #ff0000;
@@ -39,6 +41,48 @@
             font-family: 'Roboto', sans-serif;
             color: #fff;
             overflow: hidden;
+        }
+
+        .snow-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(3px 3px at 100px 50px, rgba(255,255,255,0.6) 50%, transparent),
+                radial-gradient(4px 4px at 200px 150px, rgba(255,255,255,0.4) 50%, transparent),
+                radial-gradient(2px 2px at 300px 250px, rgba(255,255,255,0.7) 50%, transparent),
+                radial-gradient(3px 3px at 400px 350px, rgba(255,255,255,0.3) 50%, transparent),
+                radial-gradient(4px 4px at 500px 100px, rgba(255,255,255,0.5) 50%, transparent),
+                radial-gradient(2px 2px at 50px 200px, rgba(255,255,255,0.6) 50%, transparent),
+                radial-gradient(3px 3px at 150px 300px, rgba(255,255,255,0.8) 50%, transparent),
+                radial-gradient(4px 4px at 250px 400px, rgba(255,255,255,0.4) 50%, transparent),
+                radial-gradient(2px 2px at 350px 500px, rgba(255,255,255,0.6) 50%, transparent);
+            background-size: 600px 600px;
+            animation: snowFall 20s linear infinite;
+            opacity: 0.6;
+        }
+
+        .snow-layer.layer2 {
+            background-size: 400px 400px;
+            animation: snowFall 15s linear infinite;
+            opacity: 0.4;
+            filter: blur(1px);
+        }
+
+        .snow-layer.layer3 {
+            background-size: 300px 300px;
+            animation: snowFall 10s linear infinite;
+            opacity: 0.2;
+            filter: blur(2px);
+        }
+
+        @keyframes snowFall {
+            0% { background-position: 0px -600px; }
+            100% { background-position: 100px 0px; }
         }
 
         /* --- PROFESSIONAL HEADER --- */
@@ -101,26 +145,43 @@
         .p-icon {
             width: 55px;
             height: 55px;
-            background: #000;
-            border: 2px solid #ffaa00;
-            border-radius: 50%;
+            background: #111;
+            border: 2px solid #555;
             position: relative;
             cursor: pointer;
             overflow: hidden;
             transition: 0.3s;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+            border-radius: 50%;
+            /* Make perfectly round */
+        }
+
+        .p-icon::after {
+            content: '✎';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff0000;
+            font-size: 0.8rem;
+            padding: 2px 10px;
+            opacity: 0;
+            transition: 0.3s;
         }
 
         .p-icon:hover {
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-            transform: scale(1.1);
+            border-color: #ff0000;
+        }
+
+        .p-icon:hover::after {
+            opacity: 1;
         }
 
         .p-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%;
         }
 
         .p-info {
@@ -128,10 +189,12 @@
         }
 
         .p-username {
-            font-weight: bold;
-            font-size: 1.1rem;
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
             color: #fff;
             line-height: 1;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.6);
         }
 
         .p-rank-line {
@@ -183,13 +246,18 @@
         .badge-title {
             font-family: 'Creepster', cursive;
             font-size: 2.5rem;
-            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            background: linear-gradient(to bottom, #ff0000 0%, #ff0000 30%, #00ff00 65%, #333 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(139, 0, 0, 0.8);
-            filter: brightness(1.2);
+            filter: brightness(1.8);
+            animation: gameTitleGlow 2.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes gameTitleGlow {
+            0% { filter: brightness(1.8) drop-shadow(0 0 2px rgba(255, 0, 0, 0.5)); transform: scale(1); }
+            100% { filter: brightness(2.5) drop-shadow(0 0 15px rgba(0, 255, 0, 0.8)); transform: scale(1.02); }
         }
 
         .badge-sub {
@@ -228,8 +296,15 @@
         }
 
         @keyframes resIconShine {
-            0%, 100% { filter: drop-shadow(0 0 5px currentColor) brightness(1); }
-            50% { filter: drop-shadow(0 0 12px currentColor) brightness(1.5); }
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 5px currentColor) brightness(1);
+            }
+
+            50% {
+                filter: drop-shadow(0 0 12px currentColor) brightness(1.5);
+            }
         }
 
         .res-val {
@@ -291,8 +366,8 @@
         }
 
         .nav-item {
-            width: 220px;
-            height: 60px;
+            width: 240px;
+            height: 65px;
             background: rgba(10, 0, 0, 0.7);
             border: 1px solid #333;
             display: flex;
@@ -344,7 +419,7 @@
 
         .nav-item span {
             font-family: 'Creepster', cursive;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             letter-spacing: 2px;
             background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
             -webkit-background-clip: text;
@@ -656,6 +731,15 @@
         }
 
         /* Missions */
+        .mission-panel {
+            animation: missionPulse 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes missionPulse {
+            0% { box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 5px 20px rgba(0,0,0,0.5); border-color: rgba(255, 255, 255, 0.1); }
+            100% { box-shadow: inset 0 0 20px rgba(255,170,0,0.2), 0 5px 30px rgba(255,170,0,0.4); border-color: rgba(255, 170, 0, 0.5); }
+        }
+
         .mission-list {
             display: flex;
             flex-direction: column;
@@ -1060,11 +1144,11 @@
 
         .char-modal-container {
             display: grid;
-            grid-template-columns: 350px 1fr 350px;
+            grid-template-columns: 300px 1fr 320px;
             width: 100%;
             height: 100%;
-            padding: 40px;
-            gap: 20px;
+            padding: 20px;
+            gap: 15px;
             box-sizing: border-box;
             position: relative;
             z-index: 5;
@@ -1094,7 +1178,7 @@
         .char-selection-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 45px;
         }
 
         .char-portrait-box {
@@ -1124,8 +1208,24 @@
         .char-portrait-box.locked::after {
             content: '🔒';
             position: absolute;
-            font-size: 1.2rem;
-            opacity: 0.7;
+            font-size: 1.5rem;
+            opacity: 0.95;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ffcc00, 0 0 20px #ff9900;
+            filter: drop-shadow(0 0 5px #ffcc00);
+            z-index: 10;
+            animation: lockPulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes lockPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px #ffcc00); }
+            100% { transform: scale(1.2); filter: drop-shadow(0 0 15px #ff0000); text-shadow: 0 0 15px #ffcc00, 0 0 25px #ff0000; }
+        }
+
+        .char-portrait-box.gated {
+            opacity: 0.4 !important;
+            filter: grayscale(1) !important;
+            cursor: not-allowed !important;
         }
 
         .char-portrait-box img {
@@ -1168,8 +1268,13 @@
         }
 
         @keyframes scanline {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(33%, 33%); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(33%, 33%);
+            }
         }
 
         .coming-soon-box span {
@@ -1178,8 +1283,15 @@
         }
 
         @keyframes blink {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* CENTER: Viewer Area */
@@ -1202,16 +1314,8 @@
         }
 
         .rotating-stage {
-            width: 450px;
-            height: 120px;
-            background: radial-gradient(ellipse at center, rgba(0, 242, 255, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: rotateX(75deg);
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.4);
-            border: 4px solid rgba(0, 242, 255, 0.5);
-            animation: stageGlow 3s infinite ease-in-out;
+            display: none !important;
+            /* Replaced by premium 3D stage ring inside Three.js scene */
         }
 
         @keyframes stageGlow {
@@ -1232,11 +1336,13 @@
         .char-stats-area {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 15px;
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
-            padding: 30px;
+            padding: 20px;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            scrollbar-width: thin;
         }
 
         .char-detail-header {
@@ -1246,11 +1352,11 @@
 
         .char-detail-name {
             font-family: 'Creepster', cursive;
-            font-size: 3.5rem;
+            font-size: 2.2rem;
             font-weight: 400;
             color: #fff;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             background: linear-gradient(to bottom, #fff, #888);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1265,16 +1371,16 @@
         }
 
         .char-detail-desc {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #aaa;
-            line-height: 1.6;
+            line-height: 1.5;
             font-family: 'Roboto', sans-serif;
         }
 
         .stats-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
         }
 
         .stat-row {
@@ -1351,10 +1457,10 @@
             background: #fff;
             color: #000;
             border: none;
-            padding: 20px;
+            padding: 12px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 5px;
@@ -1385,7 +1491,7 @@
         .nav-btn-alt {
             background: none;
             border: none;
-            color: #555;
+            color: #39ff14;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
             font-weight: 900;
@@ -1395,10 +1501,12 @@
             gap: 10px;
             transition: 0.3s;
             letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
         }
 
         .nav-btn-alt:hover {
             color: #fff;
+            text-shadow: 0 0 15px #39ff14, 0 0 30px #39ff14;
         }
 
         .nav-btn-alt span {
@@ -1786,52 +1894,171 @@
             box-shadow: none;
         }
 
-        /* Avatar Modal */
+        /* Profile Edit Modal (Z-APOCALYPSE Theme) */
         .avatar-modal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10000;
             display: none;
             justify-content: center;
             align-items: center;
-            font-family: 'Orbitron', sans-serif;
+            animation: fadeIn 0.3s ease;
         }
+
         .avatar-content {
-            background: #111;
-            border: 2px solid #333;
-            padding: 30px;
-            width: 450px;
-            text-align: center;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-top: 3px solid #ff0000;
+            width: 550px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
             position: relative;
         }
+
         .avatar-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-top: 20px;
         }
+
         .avatar-item {
             width: 100%;
             aspect-ratio: 1;
-            border: 3px solid #444;
-            border-radius: 50%;
+            border: 2px solid #333;
+            background: #111;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             overflow: hidden;
+            position: relative;
+            border-radius: 50%;
+            /* perfectly round avatars */
         }
+
         .avatar-item:hover {
-            border-color: var(--toxic-green);
-            transform: scale(1.1);
+            border-color: #ff0000;
         }
+
+        .avatar-item.selected {
+            border-color: #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+        }
+
+        .avatar-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 15%;
+            right: 15%;
+            background: #39ff14;
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #000;
+        }
+
         .avatar-item img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-edit-input {
+            width: 100%;
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
+            padding: 10px;
+            outline: none;
+            transition: 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .profile-edit-input:hover {
+            border-color: #777;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-edit-input:focus {
+            border-color: #ff0000;
+        }
+
+        /* CONFIRM button — same corner-bracket effect as START button */
+        .confirm-btn {
+            width: 100%;
+            margin-top: 20px;
+            background: rgba(10, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 12px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.6rem;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: 3px;
+            position: relative;
+            transition: 0.4s;
+            text-align: center;
+        }
+
+        .confirm-btn::before,
+        .confirm-btn::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border: 3px solid #8b0000;
+            transition: 0.4s;
+        }
+
+        .confirm-btn::before {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .confirm-btn::after {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .confirm-btn:hover {
+            background: rgba(30, 0, 0, 0.95);
+            transform: scale(1.03);
+        }
+
+        .confirm-btn:hover::before,
+        .confirm-btn:hover::after {
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            border-image: linear-gradient(45deg, #ff0000, #00ff00) 1;
+        }
+
+        .confirm-btn span {
+            background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
         }
 
         /* Settings Modal Specifics */
         .settings-modal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.6);
             z-index: 15000;
             display: none;
@@ -1907,8 +2134,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Sliders */
@@ -1982,7 +2216,10 @@
         .slider-toggle {
             position: absolute;
             cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: rgba(255, 255, 255, 0.1);
             transition: .4s;
             border-radius: 24px;
@@ -2001,12 +2238,12 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider-toggle {
+        input:checked+.slider-toggle {
             background-color: rgba(57, 255, 20, 0.2);
             border-color: #39ff14;
         }
 
-        input:checked + .slider-toggle:before {
+        input:checked+.slider-toggle:before {
             transform: translateX(24px);
             background-color: #39ff14;
             box-shadow: 0 0 10px #39ff14;
@@ -2060,8 +2297,15 @@
         }
 
         @keyframes notifySlideIn {
-            from { opacity: 0; transform: translateY(-50px) scale(0.8); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .notification.success {
@@ -2075,10 +2319,276 @@
             color: #ff0000;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         }
+
+        /* --- Daily Reward & Spin Wheel CSS --- */
+        .daily-reward-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .wheel-modal-content {
+            background: linear-gradient(180deg, #151515 0%, #0d0d0d 100%);
+            border: 2px solid #3e2723; /* Dark brown rust border */
+            border-radius: 8px;
+            width: 450px;
+            box-shadow: 0 0 35px rgba(247, 162, 28, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.9);
+            position: relative;
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wheel-modal-header {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border-bottom: 2px solid #3e2723;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .wheel-modal-title {
+            font-family: 'Creepster', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #f7a21c, #ff3333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(255, 51, 51, 0.3);
+        }
+
+        .close-wheel {
+            color: #888;
+            cursor: pointer;
+            font-size: 1.6rem;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .close-wheel:hover {
+            color: #ff3333;
+            text-shadow: 0 0 10px #ff3333;
+        }
+
+        .wheel-body {
+            position: relative;
+            margin: 25px 0 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 380px;
+            height: 380px;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.2rem;
+            color: #ff5722;
+            text-shadow: 0 0 12px rgba(255, 87, 34, 0.9);
+            z-index: 30;
+        }
+
+        .wheel-outer-ring {
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+            background: #111;
+            width: 380px;
+            height: 380px;
+        }
+
+        .wheel-center-trigger {
+            position: absolute;
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #5d3422 0%, #2f190e 100%);
+            border: 6px solid #1a1a1a;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 12px rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+        }
+
+        .wheel-center-trigger:hover:not(.disabled) {
+            transform: scale(1.06);
+            box-shadow: 0 0 25px rgba(247, 162, 28, 0.8), inset 0 0 12px rgba(247, 162, 28, 0.3);
+            border-color: #f7a21c;
+        }
+
+        .wheel-center-trigger.disabled {
+            background: radial-gradient(circle, #2d2d2d 0%, #181818 100%);
+            border-color: #333;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.8);
+            cursor: not-allowed;
+        }
+
+        .wheel-center-trigger .spin-title {
+            font-family: 'Creepster', cursive;
+            font-size: 2.1rem;
+            color: #f7a21c; /* Yellow rust */
+            text-shadow: 0 0 8px rgba(247, 162, 28, 0.6);
+            margin: 0;
+            line-height: 1;
+            letter-spacing: 1px;
+        }
+
+        .wheel-center-trigger:hover:not(.disabled) .spin-title {
+            color: #ffb74d;
+            text-shadow: 0 0 12px rgba(255, 183, 77, 0.9);
+        }
+
+        .wheel-center-trigger.disabled .spin-title {
+            color: #555;
+            text-shadow: none;
+        }
+
+        .wheel-center-trigger .spin-sub {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.5rem;
+            color: #aaa;
+            letter-spacing: 0.5px;
+            margin-top: 5px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .wheel-center-trigger.disabled .spin-sub {
+            color: #666;
+        }
+
+        .prize-dossier {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: #aaa;
+            letter-spacing: 1px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(62, 39, 35, 0.3);
+            max-width: 85%;
+            min-height: 18px;
+            text-transform: uppercase;
+        }
+
+        /* Daily Reward Bottom Center Button */
+        .daily-reward-bottom-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 28px;
+            background: rgba(10, 0, 0, 0.85);
+            border: 1px solid #333;
+            border-radius: 0;
+            color: #fff;
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.4s;
+            text-transform: uppercase;
+        }
+
+        .daily-reward-bottom-btn::before,
+        .daily-reward-bottom-btn::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f7a21c;
+            transition: 0.4s;
+        }
+
+        .daily-reward-bottom-btn::before {
+            top: -5px;
+            left: -5px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .daily-reward-bottom-btn::after {
+            bottom: -5px;
+            right: -5px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .daily-reward-bottom-btn:hover {
+            background: rgba(30, 10, 0, 0.95);
+            transform: scale(1.05);
+        }
+
+        .daily-reward-bottom-btn:hover::before,
+        .daily-reward-bottom-btn:hover::after {
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border-image: linear-gradient(45deg, #f7a21c, #ff3333) 1;
+        }
+
+        .daily-reward-bottom-btn span {
+            background: linear-gradient(to bottom, #f7a21c 0%, #ff5722 50%, #111 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        /* Claim Button after spin */
+        .claim-reward-btn {
+            margin-top: 12px;
+            padding: 10px 35px;
+            background: linear-gradient(135deg, #1a4d2e 0%, #0d2b18 50%, #1a4d2e 100%);
+            border: 2px solid #39ff14;
+            border-radius: 4px;
+            color: #39ff14;
+            font-family: 'Creepster', cursive;
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4), inset 0 0 8px rgba(57, 255, 20, 0.15);
+            transition: all 0.25s ease;
+            text-shadow: 0 0 8px rgba(57, 255, 20, 0.6);
+            display: none;
+        }
+
+        .claim-reward-btn:hover {
+            background: linear-gradient(135deg, #2e7d46 0%, #1b5e20 50%, #2e7d46 100%);
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.7), inset 0 0 12px rgba(57, 255, 20, 0.3);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
 <body>
+    <div class="snow-layer"></div>
+    <div class="snow-layer layer2"></div>
+    <div class="snow-layer layer3"></div>
 
     <header class="game-header">
         <div class="header-left">
@@ -2090,12 +2600,12 @@
             </div>
             <div class="profile-sec">
                 <div class="p-icon" onclick="toggleAvatarModal()">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1" alt="P" id="header-avatar">
+                    <img src="assets/profile 1.png?v=3" alt="P" id="header-avatar">
                 </div>
                 <div class="p-info">
                     <div class="p-username" id="header-user">HAFF</div>
                     <div class="p-rank-line">
-                        <span id="header-level-rank">Level 42 | Rank: II</span>
+                        <span id="header-level-rank">Level 1 | Rank: II</span>
                         <div class="rank-bar">
                             <div class="rank-fill" id="rank-fill-bar" style="width: 45%;"></div>
                         </div>
@@ -2116,9 +2626,10 @@
                 <div class="res-line">
                     <!-- Professional Dollar Icon -->
                     <svg viewBox="0 0 24 24" fill="#ffd700">
-                        <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.3)" stroke="#ffd700" stroke-width="1"/>
-                        <path d="M12 7v10M14.5 9a2.5 2.5 0 0 0-2.5-2.5H11a2.5 2.5 0 0 0 0 5h2a2.5 2.5 0 0 1 0 5h-1.5a2.5 2.5 0 0 1-2.5-2.5" 
-                              stroke="#ffd700" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.3)" stroke="#ffd700" stroke-width="1" />
+                        <path
+                            d="M12 7v10M14.5 9a2.5 2.5 0 0 0-2.5-2.5H11a2.5 2.5 0 0 0 0 5h2a2.5 2.5 0 0 1 0 5h-1.5a2.5 2.5 0 0 1-2.5-2.5"
+                            stroke="#ffd700" stroke-width="2" stroke-linecap="round" fill="none" />
                     </svg>
                     <span class="res-val" id="header-credits">12,500</span>
                 </div>
@@ -2128,8 +2639,8 @@
                 <div class="res-line">
                     <!-- Professional Diamond Icon -->
                     <svg viewBox="0 0 24 24" fill="#00f2ff">
-                        <path d="M12 2L4.5 9L12 22L19.5 9L12 2Z" fill="url(#diam-grad)"/>
-                        <path d="M12 2L8.5 9H15.5L12 2Z" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M12 2L4.5 9L12 22L19.5 9L12 2Z" fill="url(#diam-grad)" />
+                        <path d="M12 2L8.5 9H15.5L12 2Z" fill="rgba(255,255,255,0.3)" />
                         <defs>
                             <linearGradient id="diam-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" style="stop-color:#00f2ff;stop-opacity:1" />
@@ -2145,7 +2656,8 @@
                 <div class="res-line">
                     <!-- Skull Icon -->
                     <svg viewBox="0 0 24 24" fill="#ff4444">
-                        <path d="M12 2C8.69 2 6 4.69 6 8C6 11.31 8.69 14 12 14C15.31 14 18 11.31 18 8C18 4.69 15.31 2 12 2M12 12C9.79 12 8 10.21 8 8C8 5.79 9.79 4 12 4C14.21 4 16 5.79 16 8C16 10.21 14.21 12 12 12M12 16C7.58 16 4 19.58 4 24H20C20 19.58 16.42 16 12 16M12 18C14.21 18 16 19.79 16 22H8C8 19.79 9.79 18 12 18Z" />
+                        <path
+                            d="M12 2C8.69 2 6 4.69 6 8C6 11.31 8.69 14 12 14C15.31 14 18 11.31 18 8C18 4.69 15.31 2 12 2M12 12C9.79 12 8 10.21 8 8C8 5.79 9.79 4 12 4C14.21 4 16 5.79 16 8C16 10.21 14.21 12 12 12M12 16C7.58 16 4 19.58 4 24H20C20 19.58 16.42 16 12 16M12 18C14.21 18 16 19.79 16 22H8C8 19.79 9.79 18 12 18Z" />
                     </svg>
                     <span class="res-val" id="header-tokens">10</span>
                 </div>
@@ -2165,8 +2677,8 @@
     </header>
 
     <nav class="sidebar">
-        <div class="nav-item" onclick="toggleInventory(true)"><span>INVENTORY</span></div>
         <div class="nav-item" onclick="toggleShop(true)"><span>STORE</span></div>
+        <div class="nav-item" onclick="toggleInventory(true)"><span>INVENTORY</span></div>
         <div class="nav-item" onclick="toggleLevels(true)"><span>LEVELS</span></div>
         <div class="nav-item" onclick="toggleCharacter(true)"><span>CHARACTER</span></div>
     </nav>
@@ -2176,6 +2688,38 @@
         <div class="platform"></div>
     </main>
 
+    <!-- Daily Reward Button - Bottom Center -->
+    <button class="daily-reward-bottom-btn" onclick="toggleDailyRewardModal(true)">
+        <span>DAILY REWARD</span>
+    </button>
+
+    <!-- DAILY SPIN WHEEL MODAL -->
+    <div class="daily-reward-modal" id="daily-reward-modal" style="display:none;">
+        <div class="wheel-modal-content">
+            <div class="wheel-modal-header">
+                <span class="wheel-modal-title">DAILY SURVIVOR'S REWARDS</span>
+                <span class="close-wheel" onclick="toggleDailyRewardModal(false)">&times;</span>
+            </div>
+            
+            <div class="wheel-body">
+                <div class="wheel-pointer">▼</div>
+                <div class="wheel-outer-ring">
+                    <canvas id="wheel-canvas" width="380" height="380"></canvas>
+                </div>
+                <div class="wheel-center-trigger" id="wheel-center-trigger" onclick="startSpin()">
+                    <span class="spin-title">SPIN</span>
+                    <span class="spin-sub" id="spin-status-sub">READY</span>
+                </div>
+            </div>
+            
+            <div class="prize-dossier" id="prize-dossier">
+                SPIN TO CLAIM YOUR SURVIVAL RESOURCE REWARD!
+            </div>
+
+            <button class="claim-reward-btn" id="claim-reward-btn" onclick="claimCurrentPrize()">CLAIM REWARD</button>
+        </div>
+    </div>
+
 
     <!-- 3D CHARACTER SELECTION REBUILD -->
     <div class="char-modal" id="char-modal">
@@ -2184,23 +2728,27 @@
             <div class="char-grid-area">
                 <h1 class="char-modal-title">SELECT YOUR CHARACTER</h1>
                 <div class="char-selection-grid" id="char-grid">
-                    <!-- Dynamic grid items -->
+                    <!-- Dynamic grid items initialized with correct profile images -->
                     <div class="char-portrait-box selected" id="p-0" onclick="selectChar(0)">
-                        <img src="assets/profile 1.png" id="img-0">
+                        <img src="assets/profile 1.png?v=3" id="img-0">
                     </div>
                     <div class="char-portrait-box" id="p-1" onclick="selectChar(1)">
-                        <img src="assets/profile 2.png" id="img-2">
+                        <img src="assets/profile 3.png?v=3" id="img-1">
                     </div>
-                    <div class="char-portrait-box locked" id="p-2" onclick="selectChar(2)">
-                        <img src="assets/profile 3.png" id="img-3">
+                    <div class="char-portrait-box locked gated" id="p-2"
+                        onclick="showNotification('REACH LEVEL 3 TO INTERACT!', 'error')">
+                        <img src="assets/profile 2.png?v=3" id="img-2">
+                    </div>
+                    <div class="char-portrait-box locked gated" id="p-3"
+                        onclick="showNotification('REACH LEVEL 3 TO INTERACT!', 'error')">
+                        <img src="assets/profile 4.png?v=3" id="img-3">
                     </div>
                     <!-- Coming Soon Slots -->
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
-                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOADING</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOCKED</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOCKED</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOCKED</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOCKED</div>
+                    <div class="char-portrait-box coming-soon-box"><span>?</span>LOCKED</div>
                 </div>
             </div>
 
@@ -2210,7 +2758,8 @@
                 <div class="rotating-stage"></div>
 
                 <!-- Loading Overlay -->
-                <div class="model-loading-overlay" id="model-loading-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; font-family: 'Orbitron'; font-size: 0.8rem; color: #39ff14; text-shadow: 0 0 10px #39ff14;">
+                <div class="model-loading-overlay" id="model-loading-overlay"
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; font-family: 'Orbitron'; font-size: 0.8rem; color: #39ff14; text-shadow: 0 0 10px #39ff14;">
                     LOADING SURVIVOR MODEL...
                 </div>
             </div>
@@ -2253,7 +2802,7 @@
 
                 <div class="lock-status-panel" id="lock-panel">
                     <p class="lock-msg" id="lock-msg">LOCKED: REACH LEVEL 3 + 5,000 SKULL TOKENS</p>
-                    <button class="unlock-btn-premium" onclick="unlockMedea()">UNLOCK CHARACTER</button>
+                    <button class="unlock-btn-premium" onclick="unlockAlienSoldier()">UNLOCK CHARACTER</button>
                 </div>
 
                 <button class="deploy-btn-large" id="deploy-btn" onclick="saveCharacter()">SELECT</button>
@@ -2267,14 +2816,46 @@
         <input type="file" id="model-upload" style="display: none;" accept=".fbx,.glb" multiple>
     </div>
 
-    <!-- Avatar Selection Modal -->
+    <!-- Profile Edit Modal (Z-APOCALYPSE Theme) -->
     <div class="avatar-modal" id="avatar-modal">
         <div class="avatar-content">
-            <h2 style="color: #fff; letter-spacing: 2px; margin-bottom: 10px;">SELECT SURVIVOR</h2>
-            <div class="avatar-grid" id="avatar-grid">
-                <!-- Avatars will be injected here -->
+            <div
+                style="padding: 15px 20px; background: #222; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+                <h2
+                    style="font-family: 'Creepster', cursive; font-size: 1.8rem; background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; letter-spacing: 2px;">
+                    SURVIVOR DOSSIER</h2>
+                <span style="color: #888; cursor: pointer; font-size: 1.5rem; line-height: 1; transition: 0.2s;"
+                    onclick="toggleAvatarModal(false)" onmouseover="this.style.color='#ff0000'"
+                    onmouseout="this.style.color='#888'">&times;</span>
             </div>
-            <button onclick="toggleAvatarModal()" style="margin-top: 20px; background: #333; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Orbitron';">CANCEL</button>
+
+            <div style="padding: 25px; display: flex; gap: 25px;">
+                <div style="flex: 1;">
+                    <div
+                        style="font-family: 'Roboto', sans-serif; font-size: 0.75rem; color: #888; margin-bottom: 15px; font-weight: bold;">
+                        DISPLAY PICTURE</div>
+                    <div class="avatar-grid" id="avatar-grid">
+                        <!-- Avatars -->
+                    </div>
+                </div>
+
+                <div style="flex: 1.2; display: flex; flex-direction: column;">
+                    <div
+                        style="font-family: 'Roboto', sans-serif; font-size: 0.75rem; color: #888; margin-bottom: 10px; font-weight: bold;">
+                        PLAYER ALIAS</div>
+                    <input type="text" id="edit-username-input" class="profile-edit-input" placeholder="ENTER ALIAS"
+                        maxlength="12" style="margin-bottom: 20px;">
+
+                    <div
+                        style="font-family: 'Roboto', sans-serif; font-size: 0.75rem; color: #888; margin-bottom: 5px; font-weight: bold;">
+                        ACCOUNT ID</div>
+                    <div
+                        style="font-family: 'Orbitron', sans-serif; color: #555; font-size: 0.9rem; margin-bottom: auto;">
+                        #7A99-X2</div>
+
+                    <button class="confirm-btn" onclick="saveProfile()"><span>CONFIRM</span></button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2366,8 +2947,11 @@
     <div id="settings-modal" class="settings-modal">
         <div class="modal-content settings-glass">
             <span class="close-btn" onclick="toggleSettings(false)">&times;</span>
-            <h2 style="font-family: 'Creepster', cursive; font-size: 2.2rem; text-align: center; background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;"><span>SETTINGS</span></h2>
-            
+            <h2
+                style="font-family: 'Creepster', cursive; font-size: 2.2rem; text-align: center; background: linear-gradient(to bottom, #ff0000 0%, #00ff00 50%, #111 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;">
+                <span>SETTINGS</span>
+            </h2>
+
             <div class="settings-tabs">
                 <button class="tab-btn active" onclick="switchSettingsTab(event, 'audio')">AUDIO</button>
                 <button class="tab-btn" onclick="switchSettingsTab(event, 'graphics')">GRAPHICS</button>
@@ -2378,7 +2962,8 @@
             <div class="tab-content active" id="audio">
                 <div class="setting-row">
                     <label>MASTER VOLUME <span class="val-display">80%</span></label>
-                    <input type="range" id="set-master-vol" min="0" max="100" value="80" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-master-vol" min="0" max="100" value="80"
+                        oninput="updateSliderVal(this)">
                 </div>
                 <div class="setting-row">
                     <label>MUSIC VOLUME <span class="val-display">60%</span></label>
@@ -2410,7 +2995,8 @@
                 </div>
                 <div class="setting-row">
                     <label>RENDER SCALE <span class="val-display">100%</span></label>
-                    <input type="range" id="set-render-scale" min="50" max="150" value="100" oninput="updateSliderVal(this)">
+                    <input type="range" id="set-render-scale" min="50" max="150" value="100"
+                        oninput="updateSliderVal(this)">
                 </div>
             </div>
 
@@ -2429,16 +3015,67 @@
 
     <script>
         const avatarList = [
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Felix",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Aria",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Leo",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Luna",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Milo",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Maya",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Oscar",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Zoe",
-            "https://api.dicebear.com/7.x/lorelei/svg?seed=Jasper"
+            "assets/profile 1.png?v=3",
+            "assets/profile 2.png?v=3",
+            "assets/profile 3.png?v=3",
+            "assets/profile 4.png?v=3"
         ];
+
+        let tempSelectedAvatar = "";
+
+        function toggleAvatarModal(show = true) {
+            const modal = document.getElementById('avatar-modal');
+            modal.style.display = show ? 'flex' : 'none';
+            if (show) {
+                document.getElementById('edit-username-input').value = lobbyData.user.name;
+                tempSelectedAvatar = lobbyData.user.avatar;
+
+                const grid = document.getElementById('avatar-grid');
+                grid.innerHTML = '';
+                avatarList.forEach(url => {
+                    const item = document.createElement('div');
+                    const isSelected = url === tempSelectedAvatar;
+                    item.className = `avatar-item ${isSelected ? 'selected' : ''}`;
+                    item.innerHTML = `<img src="${url}">`;
+                    item.onclick = () => selectAvatarItem(url);
+                    grid.appendChild(item);
+                });
+            }
+        }
+
+        function selectAvatarItem(url) {
+            tempSelectedAvatar = url;
+            const items = document.querySelectorAll('.avatar-item');
+            items.forEach(item => {
+                const imgUrl = item.querySelector('img').src;
+                if (imgUrl === url) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function saveProfile() {
+            const newName = document.getElementById('edit-username-input').value.trim();
+            if (newName.length < 3) {
+                showNotification("CALLSIGN MUST BE AT LEAST 3 CHARACTERS", "error");
+                return;
+            }
+
+            lobbyData.user.name = newName;
+            lobbyData.user.avatar = tempSelectedAvatar;
+
+            localStorage.setItem('loggedInUser', newName);
+            localStorage.setItem('lastSurvivor', newName);
+            localStorage.setItem('userAvatar', tempSelectedAvatar);
+
+            document.getElementById('header-user').textContent = newName.toUpperCase();
+            document.getElementById('header-avatar').src = tempSelectedAvatar;
+
+            toggleAvatarModal(false);
+            showNotification("PROFILE UPDATED", "success");
+        }
 
         function showNotification(message, type = 'success') {
             const container = document.getElementById('notification-container');
@@ -2455,13 +3092,13 @@
 
         let lobbyData = {
             user: {
-                name: localStorage.getItem('loggedInUser') || localStorage.getItem('lastSurvivor') || "HAFF",
+                name: localStorage.getItem('loggedInUser') || "HAFF",
                 credits: 0,
                 tokens: 0,
                 level: 1,
                 rank: "ROOKIE",
                 exp: 45,
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Zombie1"
+                avatar: localStorage.getItem('userAvatar') || "assets/profile 1.png?v=3"
             },
             missions: []
         };
@@ -2473,13 +3110,13 @@
         let activeTab = 'weapons';
 
         async function initData() {
-            const username = localStorage.getItem('loggedInUser') || localStorage.getItem('lastSurvivor');
+            const username = localStorage.getItem('loggedInUser');
             if (!username) {
                 window.location.replace('index.html');
                 return;
             }
             lobbyData.user.name = username;
-            
+
             try {
                 // Fetch Profile
                 const profileRes = await fetch(`http://localhost:5100/api/user/profile/${username}`);
@@ -2490,6 +3127,8 @@
                     lobbyData.user.level = profile.level;
                     lobbyData.user.exp = profile.experience;
                     lobbyData.user.equippedWeaponId = profile.equippedWeaponId;
+                    
+                    localStorage.setItem('totalCoins', profile.coins);
                 }
 
                 // Fetch Store Items
@@ -2562,9 +3201,9 @@
 
         function useDefaultMissions() {
             lobbyData.missions = [
-                { id: "m1", title: "15 HEADSHOTS", progress: 12, goal: 15 },
-                { id: "m2", title: "SURVIVE Z-WAVE", progress: 0, goal: 1 },
-                { id: "m3", title: "LOOT 10 MEDKITS", progress: 2, goal: 10 }
+                { id: "m1", title: "SURVIVAL TIME", progress: 0, goal: 180 },
+                { id: "m2", title: "TOTAL KILLS", progress: 0, goal: 50 },
+                { id: "m3", title: "COLLECTED COINS", progress: 0, goal: 1000 }
             ];
         }
 
@@ -2592,24 +3231,427 @@
             document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
             document.getElementById('header-tokens').textContent = (lobbyData.user.tokens || 0).toLocaleString();
             document.getElementById('header-avatar').src = lobbyData.user.avatar;
-            
+            document.getElementById('header-diamonds').textContent = (parseInt(localStorage.getItem('totalDiamonds')) || 0).toLocaleString();
+
+            const levelRankEl = document.getElementById('header-level-rank');
+            if (levelRankEl) {
+                levelRankEl.textContent = `Level ${lobbyData.user.level || 1} | Rank: II`;
+            }
+
             const missionContainer = document.getElementById('mission-list-container');
             if (missionContainer) {
                 missionContainer.innerHTML = '';
                 lobbyData.missions.forEach(m => {
                     const perc = Math.min(100, (m.progress / m.goal) * 100);
+                    
+                    let progressTxt = `${m.progress} / ${m.goal}`;
+                    if (m.title === 'SURVIVAL TIME') {
+                        const formatTime = (secs) => {
+                            const mm = Math.floor(secs / 60);
+                            const ss = secs % 60;
+                            return `${mm}:${ss.toString().padStart(2, '0')}`;
+                        };
+                        progressTxt = `${formatTime(m.progress)} / ${formatTime(m.goal)}`;
+                    } else if (m.title === 'TOTAL KILLS') {
+                        progressTxt = `${m.progress} / ${m.goal} KILLS`;
+                    } else if (m.title === 'COLLECTED COINS') {
+                        progressTxt = `${m.progress} / ${m.goal} COINS`;
+                    }
+
                     const item = document.createElement('div');
                     item.className = 'mission-item';
                     item.innerHTML = `
                         <div class="m-header">
                             <div class="m-title"><div class="m-icon"></div> ${m.title}</div>
-                            <div class="m-progress-txt">${m.progress} / ${m.goal}</div>
+                            <div class="m-progress-txt">${progressTxt}</div>
                         </div>
                         <div class="m-bar-bg"><div class="m-bar-fill" style="width: ${perc}%"></div></div>
                     `;
                     missionContainer.appendChild(item);
                 });
             }
+        }
+
+        // --- Daily Spin Wheel Logic ---
+        const prizes = [
+            { type: 'jackpot', amount: 10000, label: 'BIOHAZARD', color: '#8d5016', textColor: '#ffcc00' },
+            { type: 'diamonds', amount: 50, label: 'DIAMONDS', color: '#162b3d', textColor: '#00f2ff' },
+            { type: 'coins', amount: 2500, label: 'CREDITS', color: '#1a3b25', textColor: '#39ff14' },
+            { type: 'weapon', amount: 1, label: 'WEAPON SKIN', color: '#3a3331', textColor: '#ff9900' },
+            { type: 'tokens', amount: 10, label: 'SKULL TOKENS', color: '#4a231b', textColor: '#e0e0e0' },
+            { type: 'diamonds', amount: 25, label: 'DIAMONDS', color: '#162b3d', textColor: '#00f2ff' },
+            { type: 'medkit', amount: 1, label: 'MEDKIT', color: '#253e2e', textColor: '#39ff14' },
+            { type: 'coins', amount: 5000, label: 'CREDITS', color: '#1a3b25', textColor: '#39ff14' }
+        ];
+
+        let cooldownTimerInterval = null;
+
+        function checkDailySpinCooldown() {
+            const lastSpin = localStorage.getItem('lastDailySpinTime');
+            const trigger = document.getElementById('wheel-center-trigger');
+            const sub = document.getElementById('spin-status-sub');
+            if (!trigger || !sub) return;
+
+            if (!lastSpin) {
+                trigger.classList.remove('disabled');
+                sub.textContent = "READY";
+                return true;
+            }
+
+            const elapsed = Date.now() - parseInt(lastSpin);
+            const cooldown = 24 * 60 * 60 * 1000; // 24 hours
+            const remaining = cooldown - elapsed;
+
+            if (remaining > 0) {
+                trigger.classList.add('disabled');
+                const hrs = Math.floor(remaining / (3600 * 1000));
+                const mins = Math.floor((remaining % (3600 * 1000)) / (60 * 1000));
+                const secs = Math.floor((remaining % (60 * 1000)) / 1000);
+                sub.textContent = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                return false;
+            } else {
+                trigger.classList.remove('disabled');
+                sub.textContent = "READY";
+                return true;
+            }
+        }
+
+        function toggleDailyRewardModal(show) {
+            const modal = document.getElementById('daily-reward-modal');
+            modal.style.display = show ? 'flex' : 'none';
+            if (show) {
+                document.getElementById('prize-dossier').innerHTML = 'SPIN TO CLAIM YOUR SURVIVAL RESOURCE REWARD!';
+                drawWheel(0);
+                
+                // Clear any previous interval and start timer ticking
+                if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+                checkDailySpinCooldown();
+                cooldownTimerInterval = setInterval(checkDailySpinCooldown, 1000);
+            } else {
+                if (cooldownTimerInterval) {
+                    clearInterval(cooldownTimerInterval);
+                    cooldownTimerInterval = null;
+                }
+            }
+        }
+
+        // Draw custom icons directly onto the canvas for AAA look
+        function drawPrizeIcon(ctx, type, rx, ry) {
+            ctx.save();
+            ctx.translate(rx, ry);
+
+            if (type === 'jackpot') {
+                // Biohazard Symbol
+                ctx.strokeStyle = '#ffcc00';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(0, 0, 10, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#ffcc00';
+                // 3 leaves
+                for (let a = 0; a < 3; a++) {
+                    ctx.save();
+                    ctx.rotate((a * 120 * Math.PI) / 180);
+                    ctx.beginPath();
+                    ctx.arc(0, -13, 8, 0, Math.PI, true);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                }
+                // Center ring cutout
+                ctx.fillStyle = '#8d5016';
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            } 
+            else if (type === 'diamonds') {
+                // Blue Diamond
+                ctx.fillStyle = '#00f2ff';
+                ctx.beginPath();
+                ctx.moveTo(0, -12);
+                ctx.lineTo(12, -4);
+                ctx.lineTo(0, 14);
+                ctx.lineTo(-12, -4);
+                ctx.closePath();
+                ctx.fill();
+
+                // Shading highlights
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(0, -12);
+                ctx.lineTo(0, 14);
+                ctx.lineTo(-12, -4);
+                ctx.closePath();
+                ctx.globalAlpha = 0.3;
+                ctx.fill();
+            } 
+            else if (type === 'coins') {
+                // Gold Coin
+                ctx.fillStyle = '#ffd700';
+                ctx.strokeStyle = '#b8860b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, 13, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                // Dollar sign text
+                ctx.fillStyle = '#9e7815';
+                ctx.font = 'bold 15px Orbitron';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('$', 0, 1);
+            } 
+            else if (type === 'weapon') {
+                // Rifle / SMG drawing
+                ctx.fillStyle = '#ffd54f';
+                ctx.strokeStyle = '#222';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                // Barrel
+                ctx.rect(-18, -4, 25, 3);
+                // Body
+                ctx.rect(-5, -4, 15, 6);
+                // Stock
+                ctx.moveTo(10, -3);
+                ctx.lineTo(20, -1);
+                ctx.lineTo(20, 6);
+                ctx.lineTo(10, 2);
+                // Grip & Magazine
+                ctx.rect(0, 2, 3, 6);
+                ctx.rect(-6, 2, 4, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } 
+            else if (type === 'tokens') {
+                // Skull Token
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1;
+                // Skull Head
+                ctx.beginPath();
+                ctx.arc(0, -2, 10, Math.PI, 0);
+                ctx.lineTo(6, 8);
+                ctx.lineTo(-6, 8);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                // Eyes & Nose cutouts
+                ctx.fillStyle = '#4a231b';
+                ctx.beginPath();
+                ctx.arc(-3, -2, 2.5, 0, 2*Math.PI);
+                ctx.arc(3, -2, 2.5, 0, 2*Math.PI);
+                ctx.fill();
+                // Nose
+                ctx.beginPath();
+                ctx.moveTo(0, 1);
+                ctx.lineTo(-1.5, 3);
+                ctx.lineTo(1.5, 3);
+                ctx.closePath();
+                ctx.fill();
+            } 
+            else if (type === 'medkit') {
+                // Green Survival Medkit
+                ctx.fillStyle = '#81c784';
+                ctx.strokeStyle = '#1b5e20';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(-15, -10, 30, 20, 3);
+                ctx.fill();
+                ctx.stroke();
+                // Handle
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-6, -10);
+                ctx.lineTo(-6, -13);
+                ctx.lineTo(6, -13);
+                ctx.lineTo(6, -10);
+                ctx.stroke();
+                // Red Cross
+                ctx.fillStyle = '#ff1744';
+                ctx.fillRect(-2, -7, 4, 14);
+                ctx.fillRect(-7, -2, 14, 4);
+            }
+
+            ctx.restore();
+        }
+
+        function drawWheel(currentRotation) {
+            const canvas = document.getElementById('wheel-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const cw = canvas.width;
+            const ch = canvas.height;
+            const cx = cw / 2;
+            const cy = ch / 2;
+            const radius = cx - 12;
+
+            ctx.clearRect(0, 0, cw, ch);
+
+            // Draw sectors
+            const sectorAngle = (2 * Math.PI) / prizes.length;
+            prizes.forEach((prize, i) => {
+                const angle = currentRotation + i * sectorAngle;
+                
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radius, angle, angle + sectorAngle);
+                ctx.closePath();
+                ctx.fillStyle = prize.color;
+                ctx.fill();
+
+                // Sector outline border
+                ctx.strokeStyle = '#111';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Text around sector
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + sectorAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = prize.textColor;
+                ctx.font = 'bold 9px Orbitron';
+                ctx.shadowColor = prize.textColor;
+                ctx.shadowBlur = 3;
+                ctx.fillText(prize.label, radius - 35, 4);
+                ctx.restore();
+
+                // Draw high quality icon
+                const iconRadius = radius - 75;
+                const iconAngle = angle + sectorAngle / 2;
+                const rx = cx + Math.cos(iconAngle) * iconRadius;
+                const ry = cy + Math.sin(iconAngle) * iconRadius;
+                drawPrizeIcon(ctx, prize.type, rx, ry);
+            });
+
+            // Outer metallic rusted ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#4e2c1d'; // Rusted bronze/metallic
+            ctx.lineWidth = 14;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius - 7, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#23120a'; 
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 12 Rivets along the outer ring
+            for (let r = 0; r < 12; r++) {
+                const rivAngle = (r * 30 * Math.PI) / 180;
+                const rivX = cx + Math.cos(rivAngle) * (radius - 1);
+                const rivY = cy + Math.sin(rivAngle) * (radius - 1);
+
+                ctx.beginPath();
+                ctx.arc(rivX, rivY, 2.5, 0, 2 * Math.PI);
+                ctx.fillStyle = '#666';
+                ctx.fill();
+                ctx.strokeStyle = '#111';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        let isSpinning = false;
+        async function startSpin() {
+            if (isSpinning) return;
+            
+            // Check if spin is available
+            if (!checkDailySpinCooldown()) {
+                showNotification("SPIN COOLDOWN ACTIVE", "error");
+                return;
+            }
+
+            isSpinning = true;
+            const trigger = document.getElementById('wheel-center-trigger');
+            if (trigger) trigger.classList.add('disabled');
+
+            const targetPrizeIndex = Math.floor(Math.random() * prizes.length);
+            const sectorAngle = (2 * Math.PI) / prizes.length;
+            
+            // Land on sector center pointing towards 12 o'clock (-Math.PI / 2)
+            const targetAngle = -Math.PI / 2 - (targetPrizeIndex * sectorAngle + sectorAngle / 2);
+            const spins = 6;
+            const totalRotation = targetAngle - (spins * 2 * Math.PI);
+
+            let startTime = null;
+            const duration = 4000;
+
+            function animateWheel(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const currentAngle = easeOut * totalRotation;
+
+                drawWheel(currentAngle % (2 * Math.PI));
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateWheel);
+                } else {
+                    claimPrize(targetPrizeIndex);
+                }
+            }
+
+            requestAnimationFrame(animateWheel);
+        }
+
+        async function claimPrize(index) {
+            const prize = prizes[index];
+            const dossier = document.getElementById('prize-dossier');
+            
+            isSpinning = false;
+            
+            // Store spin time in localStorage to enforce One Spin Per Day limit
+            localStorage.setItem('lastDailySpinTime', Date.now().toString());
+            checkDailySpinCooldown();
+
+            if (prize.type === 'coins' || prize.type === 'jackpot') {
+                lobbyData.user.credits += prize.amount;
+                document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
+                dossier.innerHTML = `<span style="color:#39ff14; font-weight:bold;">REWARDED +$${prize.amount.toLocaleString()} CREDITS!</span>`;
+                
+                const username = lobbyData.user.name;
+                try {
+                    await fetch('http://localhost:5100/api/user/add-coins', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, coins: prize.amount })
+                    });
+                } catch (e) {
+                    console.warn("Failed to sync reward coins to server", e);
+                }
+            } 
+            else if (prize.type === 'diamonds') {
+                let currentDiamonds = parseInt(localStorage.getItem('totalDiamonds')) || 75;
+                currentDiamonds += prize.amount;
+                localStorage.setItem('totalDiamonds', currentDiamonds);
+                document.getElementById('header-diamonds').textContent = currentDiamonds.toLocaleString();
+                dossier.innerHTML = `<span style="color:#00f2ff; font-weight:bold;">REWARDED +${prize.amount} CYBER DIAMONDS!</span>`;
+            }
+            else if (prize.type === 'tokens') {
+                // Skull Tokens
+                lobbyData.user.tokens = (lobbyData.user.tokens || 0) + prize.amount;
+                document.getElementById('header-tokens').textContent = lobbyData.user.tokens.toLocaleString();
+                dossier.innerHTML = `<span style="color:#ffffff; font-weight:bold;">REWARDED +${prize.amount} SKULL TOKENS!</span>`;
+                // Optionally sync to backend profile in next update
+            }
+            else if (prize.type === 'medkit') {
+                // Awarded Medkit to local survival slots
+                dossier.innerHTML = `<span style="color:#a5d6a7; font-weight:bold;">REWARDED 1x MILITARY SURVIVAL KIT!</span>`;
+            }
+            else if (prize.type === 'weapon') {
+                // Awarded a special Weapon Skin placeholder
+                dossier.innerHTML = `<span style="color:#ffb74d; font-weight:bold;">REWARDED RARE COMBAT RIFLE WEAPON SKIN!</span>`;
+            }
+
+            showNotification(`CLAIMED: ${prize.label}`, 'success');
         }
 
         async function purchaseItem(itemId) {
@@ -2626,7 +3668,7 @@
                     showNotification(data.message, 'success');
                     lobbyData.user.credits = data.newBalance;
                     document.getElementById('header-credits').textContent = lobbyData.user.credits.toLocaleString();
-                    
+
                     await fetchInventory();
                     fillShopGrid(); // Refresh buttons
                 } else {
@@ -2672,11 +3714,11 @@
             document.getElementById('inv-item-info').innerText = item.name.toUpperCase();
             const btn = document.getElementById('inv-use-btn');
             btn.disabled = false;
-            
+
             const isEquipped = lobbyData.user.equippedWeaponId === item.id;
             btn.innerText = isEquipped ? 'EQUIPPED' : (item.category === 'Weapon' ? 'EQUIP WEAPON' : 'USE ITEM');
             btn.disabled = isEquipped;
-            
+
             btn.onclick = () => equipItem(item.id);
 
             const slots = document.querySelectorAll('.inv-slot');
@@ -2793,15 +3835,16 @@
         async function saveCharacter() {
             const username = lobbyData.user.name;
             const selectedChar = charData[selectedCharIndex].name;
-            
+
             try {
                 const res = await fetch('http://localhost:5100/api/character/update-skin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, newSkin: selectedChar })
                 });
-                
+
                 if (res.ok) {
+                    activeCharName = selectedChar;
                     localStorage.setItem('selectedRole', selectedChar);
                     localStorage.setItem('activeCharacter', selectedChar); // Game trigger
                     showNotification(`${selectedChar} DEPLOYED!`, 'success');
@@ -2827,22 +3870,41 @@
             grid.innerHTML = '';
             const selectedMap = localStorage.getItem('selectedMap') || "Training Camp";
             levelsData.forEach((lv, i) => {
-                const isLocked = false; // Bypassed for layout testing
-                const isSelected = lv.name === selectedMap;
+                const isLocked = i !== 0; // Only Level 1 (Training Camp) is unlocked
+                const isSelected = lv.name === selectedMap && !isLocked;
                 const card = document.createElement('div');
-                card.className = `level-card ${isSelected ? 'selected' : ''}`;
+                card.className = `level-card ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}`;
                 if (isSelected) {
                     card.style.borderColor = "#39ff14";
                     card.style.boxShadow = "0 0 15px rgba(57, 255, 20, 0.4)";
                 }
                 let stars = '';
                 for (let j = 0; j < 5; j++) stars += `<span style="color: ${j < lv.diff ? '#ffaa00' : '#333'}">★</span>`;
-                card.innerHTML = `
-                    <div class="level-img-box"><img src="${lv.img}" class="level-img"></div>
-                    <div class="level-name">${lv.name}</div>
-                    <div class="level-diff"><span>Difficulty: ${lv.diffLabel}</span><div style="margin-left: auto;">${stars}</div></div>
-                `;
-                card.onclick = () => selectMap(lv.name);
+                if (isLocked) {
+                    card.style.border = "1px solid rgba(139,0,0,0.5)";
+                    card.style.boxShadow = "0 0 18px rgba(139,0,0,0.35), inset 0 0 30px rgba(0,0,0,0.5)";
+                    card.innerHTML = `
+                        <div class="level-img-box" style="position:relative;overflow:hidden;">
+                            <img src="${lv.img}" class="level-img" style="filter: brightness(0.55) saturate(0.4) sepia(0.3);">
+                            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(80,0,0,0.55) 0%,rgba(0,0,0,0.7) 100%);"></div>
+                            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;">
+                                <div style="font-size:1.8rem;filter:drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 4px #8b0000);">🔒</div>
+                                <span style="font-family:'Orbitron',monospace;font-size:0.45rem;letter-spacing:2px;color:#ff4444;text-shadow:0 0 8px #ff0000;background:rgba(0,0,0,0.6);padding:2px 6px;border:1px solid rgba(255,0,0,0.3);">COMING SOON</span>
+                            </div>
+                        </div>
+                        <div class="level-name" style="color:#663333;letter-spacing:2px;">${lv.name}</div>
+                        <div class="level-diff"><span style="color:#4a2020;font-size:0.65rem;letter-spacing:1px;">⛔ LOCKED</span></div>
+                    `;
+                    card.onclick = () => showNotification("🔒 THIS LEVEL IS LOCKED — COMING SOON!", "error");
+
+                } else {
+                    card.innerHTML = `
+                        <div class="level-img-box"><img src="${lv.img}" class="level-img"></div>
+                        <div class="level-name">${lv.name}</div>
+                        <div class="level-diff"><span>Difficulty: ${lv.diffLabel}</span><div style="margin-left: auto;">${stars}</div></div>
+                    `;
+                    card.onclick = () => selectMap(lv.name);
+                }
                 grid.appendChild(card);
             });
         }
@@ -2852,6 +3914,13 @@
             fillLevelsGrid();
             updateStartButton();
             showNotification(`MAP SELECTED: ${name.toUpperCase()}`, 'success');
+
+            // Auto-redirection trigger: immediately close level selection modal on click
+            if (name.toUpperCase() === "TRAINING CAMP") {
+                setTimeout(() => {
+                    toggleLevels(false);
+                }, 300);
+            }
         }
 
         function updateStartButton() {
@@ -2864,217 +3933,568 @@
 
         const charData = [
             {
-                name: "REMY",
-                role: "FRONT-LINE VETERAN",
-                desc: "Former special forces. Heavy combat specialist with high durability and devastating firepower. The ultimate shield for any survivor squad.",
-                stats: { dmg: 85, spd: 40, acc: 65, arm: 90 },
-                model: "assets/Remy.fbx",
+                name: "GASMASK",
+                role: "Scavenger Expert",
+                desc: "Hardened survivor of toxic ruins. Resourceful scavenger with balanced speed and tactical evasion. Capable of surviving in highly contaminated environments.",
+                stats: { dmg: 60, spd: 70, acc: 75, arm: 50 },
+                model: "assets/models/GasMask/GasMask_Base.fbx",
+                idleAnim: null,
+                img: "assets/profile 3.png?v=3",
                 type: "fbx",
                 locked: false
+            },
+            {
+                name: "AlienSoldier",
+                role: "Cyber Trooper",
+                desc: "Advanced cybernetic soldier from outer colonies. Deployed with experimental tech, heavy shields, and rapid kinetic speed boosters.",
+                stats: { dmg: 50, spd: 80, acc: 60, arm: 45 },
+                model: "assets/models/AlienSoldier/Alien_Base.fbx",
+                idleAnim: null,
+                img: "assets/profile 4.png?v=3",
+                type: "fbx",
+                locked: false
+            },
+            {
+                name: "REMY",
+                role: "Tactical Enforcer",
+                desc: "Elite SWAT operative trained in close-quarters combat and room clearing. Heavy armor plating and precise weapon handling make him a frontline powerhouse.",
+                stats: { dmg: 85, spd: 45, acc: 60, arm: 90 },
+                model: "assets/models/SwatGuy_Idle.fbx",
+                idleAnim: null,
+                img: "assets/profile 1.png?v=3",
+                type: "fbx",
+                locked: true
             },
             {
                 name: "HUNTER",
-                role: "SHADOW OPERATIVE",
-                desc: "A mysterious phantom from the old world. Unmatched speed and tactical superiority. He strikes from the darkness and vanishes before the undead even notice.",
-                stats: { dmg: 70, spd: 95, acc: 80, arm: 40 },
-                model: "assets/Remy.fbx", // Using Remy as fallback since hunter.fbx is missing
+                role: "Melee Guardian",
+                desc: "Ancient warrior wielding sword and shield. Unmatched in close combat defense. His impenetrable shield wall and devastating blade strikes decimate any threat.",
+                stats: { dmg: 75, spd: 55, acc: 50, arm: 95 },
+                model: "assets/models/Sword And Shield Idle.fbx",
+                idleAnim: null,
+                img: "assets/profile 2.png?v=3",
                 type: "fbx",
-                locked: false
-            },
-            {
-                name: "MEDEA",
-                role: "SILENT STALKER",
-                desc: "Master of stealth and urban scavenging. Optimized for agility and silent takedowns. She survives where others fall by staying out of sight.",
-                stats: { dmg: 50, spd: 80, acc: 60, arm: 45 },
-                model: "assets/Medea By M. Arrebola.fbx",
-                type: "fbx",
-                locked: true,
-                reqLevel: 3,
-                price: 5000
+                locked: true
             }
         ];
         let selectedCharIndex = 0;
-        let medeaUnlocked = false;
+        const storedChar = localStorage.getItem('selectedCharacter') || localStorage.getItem('activeCharacter') || 'GASMASK';
+        const foundIndex = charData.findIndex(c => c.name.toUpperCase() === storedChar.toUpperCase());
+        if (foundIndex !== -1 && !charData[foundIndex].locked) {
+            selectedCharIndex = foundIndex;
+        }
+        let activeCharName = charData[selectedCharIndex].name;
+        let medeaUnlocked = true;
+        let gasmaskUnlocked = true;
+        let remyUnlocked = localStorage.getItem('remyUnlocked') === 'true' || localStorage.getItem('swatguyUnlocked') === 'true';
+        let hunterUnlocked = localStorage.getItem('hunterUnlocked') === 'true' || localStorage.getItem('swordknightUnlocked') === 'true';
 
         // Three.js Setup
-        let scene, camera, renderer, currentModel;
+        let scene, camera, renderer, currentModel, mixer, controls, currentAction = null;
+        let clock = new THREE.Clock();
         const container = document.getElementById('char-3d-container');
+        const modelCache = {};
+        let ringMesh, stageMesh; // Declared globally for visibility toggles on locked states
 
         function initThreeJS() {
             if (scene) return;
             scene = new THREE.Scene();
-            const w = window.innerWidth, h = window.innerHeight;
-            const viewerWidth = w - 700;
-            camera = new THREE.PerspectiveCamera(45, viewerWidth / h, 0.1, 2000);
-            camera.position.set(0, 1.8, 6);
+
+            // Query actual bounding dimensions of the 3D viewport container for 100% distortion-free aspect ratios
+            const w = container.clientWidth || (window.innerWidth - 700);
+            const h = container.clientHeight || window.innerHeight;
+
+            // Calculate a perfectly balanced initial FOV based on container aspect ratio to prevent close-ups and cut-offs
+            const aspect = w / h;
+            let initialFov = 45;
+            if (aspect < 1.3) {
+                initialFov = Math.min(45 * (1.3 / aspect), 60);
+            }
+
+            camera = new THREE.PerspectiveCamera(initialFov, aspect, 0.1, 2000);
+            camera.position.set(0, 1.2, 3.8); // Positioned perfectly to frame 2.2-unit character fully
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(viewerWidth, h);
+            renderer.setSize(w, h);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
             scene.add(new THREE.AmbientLight(0xffffff, 0.6));
             scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
+
+            // Robust resize listener to prevent distortion and clipping
+            window.addEventListener('resize', onWindowResize, false);
+
             const direct = new THREE.DirectionalLight(0xffffff, 1.2);
             direct.position.set(2, 8, 4);
             direct.castShadow = true;
             scene.add(direct);
+
             const cyanLight = new THREE.PointLight(0x00f2ff, 3, 15);
             cyanLight.position.set(-3, 2, 3);
             scene.add(cyanLight);
+
             const grid = new THREE.GridHelper(10, 20, 0x333333, 0x111111);
             grid.position.y = -0.01;
             scene.add(grid);
+
+            // Add a premium 3D glowing ring on the static stage (centered at 0,0,0)
+            const ringGeo = new THREE.RingGeometry(1.0, 1.15, 64);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0x00f2ff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8
+            });
+            ringMesh = new THREE.Mesh(ringGeo, ringMat); // Assigned to global variable
+            ringMesh.rotation.x = Math.PI / 2;
+            ringMesh.position.set(0, -0.008, 0); // Grounded perfectly underneath the boots on the grid floor
+            scene.add(ringMesh);
+
+            // Inner soft glowing stage disk
+            const stageGeo = new THREE.CircleGeometry(1.0, 64);
+            const stageMat = new THREE.MeshBasicMaterial({
+                color: 0x00f2ff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.15
+            });
+            stageMesh = new THREE.Mesh(stageGeo, stageMat); // Assigned to global variable
+            stageMesh.rotation.x = Math.PI / 2;
+            stageMesh.position.set(0, -0.009, 0);
+            scene.add(stageMesh);
+
+            // Upward glowing stage light to illuminate characters' legs
+            const stageLight = new THREE.PointLight(0x00f2ff, 2.0, 5);
+            stageLight.position.set(0, 0.05, 0);
+            scene.add(stageLight);
+
+            // OrbitControls - Secure Fixed Camera Rotation
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false; // Completely disable scroll & pinch zoom
+            controls.enablePan = false;  // Completely disable camera panning
+            controls.enableDamping = true; // Premium momentum feel
+            controls.dampingFactor = 0.05;
+            controls.minPolarAngle = Math.PI / 2; // Lock camera vertically (horizontal spin only)
+            controls.maxPolarAngle = Math.PI / 2; // Lock camera vertically (horizontal spin only)
+            controls.autoRotate = false;   // Cinematic slow rotating showcase - turned off for static stage
+            controls.autoRotateSpeed = 0;
+            controls.target.set(0, 1.1, 0); // Focus camera target precisely on character chest (y = 1.1)
+
             animate();
-            setupFileUpload();
         }
 
-        const DB_NAME = 'ZApocalypseModels_v1';
-        const STORE = 'models';
-        function openDB() { return new Promise((res, rej) => { const req = indexedDB.open(DB_NAME, 1); req.onupgradeneeded = e => e.target.result.createObjectStore(STORE); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
-        async function dbPut(key, blob) { const db = await openDB(); return new Promise((res, rej) => { const t = db.transaction(STORE, 'readwrite'); t.objectStore(STORE).put(blob, key); t.oncomplete = res; t.onerror = rej; }); }
-        async function dbGet(key) { const db = await openDB(); return new Promise((res, rej) => { const t = db.transaction(STORE, 'readonly'); const r = t.objectStore(STORE).get(key); r.onsuccess = () => res(r.result); r.onerror = rej; }); }
+        // Handle viewport adjustments dynamically on window resize
+        function onWindowResize() {
+            if (!camera || !renderer || !container) return;
+            const w = container.clientWidth;
+            const h = container.clientHeight;
 
-        async function initCharacterModels() {
-            // Bypass manual upload and load from assets folder directly
-            selectChar(0);
-        }
+            camera.aspect = w / h;
 
-        function setupFileUpload() {
-            const input = document.getElementById('model-upload');
-            if (!input) return;
-            input.onchange = async (e) => {
-                const files = Array.from(e.target.files);
-                const progress = document.getElementById('setup-progress');
-                progress.style.display = 'block';
-                for (const file of files) {
-                    const lower = file.name.toLowerCase();
-                    let idx = -1;
-                    if (lower.includes('medea')) idx = 2; else if (lower.includes('remy')) idx = 0; else if (lower.includes('hunter')) idx = 1;
-                    if (idx >= 0) { await dbPut(charData[idx].name, file); charData[idx].blobUrl = URL.createObjectURL(file); }
-                }
-                progress.textContent = '✅ SAVED! Loading characters...';
-                document.getElementById('model-setup-banner').style.display = 'none';
-                const firstAvail = charData.findIndex(c => c.blobUrl);
-                if (firstAvail >= 0) selectChar(firstAvail);
-                input.value = '';
-            };
-        }
-
-        function placeModel(object) {
-            if (currentModel) scene.remove(currentModel);
-            currentModel = object;
-            const box = new THREE.Box3().setFromObject(currentModel);
-            const size = box.getSize(new THREE.Vector3()).length();
-            const center = box.getCenter(new THREE.Vector3());
-            currentModel.position.sub(center);
-            const targetSize = 4;
-            const scale = targetSize / size;
-            currentModel.scale.setScalar(scale);
-            const box2 = new THREE.Box3().setFromObject(currentModel);
-            currentModel.position.y -= box2.min.y;
-            currentModel.traverse(child => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; if (child.material) child.material.needsUpdate = true; } });
-            scene.add(currentModel);
-        }
-
-        function loadModel(path, type) {
-            // Fix path and encoding
-            const finalPath = path.replace(/ /g, '%20');
-            const overlay = document.getElementById('model-loading-overlay');
-            if (overlay) {
-                overlay.style.display = 'block';
-                overlay.textContent = `LOADING: ${finalPath.split('/').pop().toUpperCase()}...`;
+            // Adjust FOV dynamically based on aspect ratio to guarantee character fits fully head-to-toe with no cut-offs
+            const defaultFov = 45;
+            if (camera.aspect < 1.3) {
+                // Zoom out slightly by increasing FOV when the aspect ratio is narrower
+                camera.fov = defaultFov * (1.3 / camera.aspect);
+            } else {
+                camera.fov = defaultFov;
             }
+            camera.fov = Math.min(camera.fov, 60); // Clamp to prevent excessive fish-eye distortion
 
-            console.log("ATTEMPTING TO LOAD:", finalPath);
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
 
-            const onLoad = (object) => {
-                if (overlay) overlay.style.display = 'none';
-                console.log("LOAD SUCCESS:", finalPath);
-                placeModel(object);
-            };
+        // Preload all models in background to memory cache
+        function preLoadModels() {
+            charData.forEach((char, index) => {
+                console.log(`[Preloading] Starting load for: ${char.name} (Base: ${char.model}, Anim: ${char.idleAnim})`);
 
-            const onError = (err) => {
-                if (overlay) overlay.style.display = 'none';
-                console.error('3D LOAD ERROR:', err, 'FAILED PATH:', finalPath);
-                
-                // Fallback logic
-                if (finalPath !== "assets/Remy.fbx") {
-                    console.log("FALLING BACK TO REMY.FBX");
-                    loadModel("assets/Remy.fbx", "fbx");
-                } else {
-                    showFallback();
-                }
-            };
-
-            try {
-                if (type === 'glb' || finalPath.toLowerCase().endsWith('.glb')) {
-                    const loader = new THREE.GLTFLoader();
-                    loader.load(finalPath, (gltf) => onLoad(gltf.scene), undefined, onError);
-                } else {
-                    const loader = new THREE.FBXLoader();
-                    // Ensure loader can find fflate if needed
-                    if (window.fflate) {
-                        // Some versions require this
+                const loader = new THREE.FBXLoader();
+                loader.load(char.model, (baseObject) => {
+                    if (char.idleAnim) {
+                        // Load separate idle animation and apply to base
+                        loader.load(char.idleAnim, (animObject) => {
+                            console.log(`[Preloading] Success: Cached model & idle animation for ${char.name}`);
+                            if (animObject.animations && animObject.animations.length > 0) {
+                                baseObject.animations = [animObject.animations[0]];
+                            }
+                            modelCache[char.name] = baseObject;
+                            if (selectedCharIndex === index) {
+                                displayCachedModel(char.name);
+                                const overlay = document.getElementById('model-loading-overlay');
+                                if (overlay) overlay.style.display = 'none';
+                            }
+                        }, undefined, (err) => {
+                            console.error(`[Preloading] Anim Error for ${char.name}:`, err);
+                            // Still cache base even if anim fails
+                            modelCache[char.name] = baseObject;
+                            if (selectedCharIndex === index) {
+                                displayCachedModel(char.name);
+                                const overlay = document.getElementById('model-loading-overlay');
+                                if (overlay) overlay.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        // No separate idle anim — use base.fbx built-in animations
+                        console.log(`[Preloading] Success: Cached base model for ${char.name} (built-in idle)`);
+                        modelCache[char.name] = baseObject;
+                        if (selectedCharIndex === index) {
+                            displayCachedModel(char.name);
+                            const overlay = document.getElementById('model-loading-overlay');
+                            if (overlay) overlay.style.display = 'none';
+                        }
                     }
-                    loader.load(finalPath, onLoad, undefined, onError);
+                }, undefined, (err) => {
+                    console.error(`[Preloading] Base Error for ${char.name}:`, err);
+                });
+            });
+        }
+
+        // Centering and rendering the model from in-memory cache
+        function displayCachedModel(charName) {
+            const object = modelCache[charName];
+            if (!object) return false;
+
+            if (currentModel) scene.remove(currentModel);
+
+            currentModel = object;
+
+            // 1. Reset scale and positions to default for precise box calculations
+            currentModel.scale.set(1, 1, 1);
+            currentModel.rotation.set(0, 0, 0);
+            currentModel.position.set(0, 0, 0);
+
+            // Force update world matrix to ensure child matrices are initialized correctly
+            currentModel.updateMatrixWorld(true);
+
+            // 2. Compute bounding box of actual meshes only (completely bypassing camera/light helpers inside FBX)
+            let box = new THREE.Box3();
+            let hasMesh = false;
+            currentModel.traverse(child => {
+                if (child.isMesh) {
+                    child.updateMatrixWorld(true);
+                    const childBox = new THREE.Box3().setFromObject(child);
+                    if (!hasMesh) {
+                        box.copy(childBox);
+                        hasMesh = true;
+                    } else {
+                        box.union(childBox);
+                    }
                 }
-            } catch (e) {
-                console.error("LOADER CRASHED:", e);
-                onError(e);
+            });
+            if (!hasMesh) {
+                box.setFromObject(currentModel);
+                hasMesh = true;
             }
+
+            // 3. Center the model horizontally (hips-based for perfect alignment and in-place spinning) and place feet exactly at y = 0 safely
+            const height = box.max.y - box.min.y;
+            if (hasMesh && isFinite(height) && height > 0.01) {
+                // Scale precisely to a perfect standard height of 2.2 units
+                const targetSize = 2.2;
+                const scale = targetSize / height;
+                currentModel.scale.setScalar(scale);
+
+                // Centering based on mixamorigHips/Hips bone for flawless symmetry and in-place spinning
+                const center = box.getCenter(new THREE.Vector3());
+                const hips = currentModel.getObjectByName("mixamorigHips") || currentModel.getObjectByName("Hips");
+
+                let posX = -center.x * scale;
+                let posZ = -center.z * scale;
+
+                if (hips) {
+                    hips.updateMatrixWorld(true);
+                    posX = -hips.position.x * scale;
+                    posZ = -hips.position.z * scale;
+                }
+
+                const posY = -box.min.y * scale;
+
+                // Store the exact target coordinates to lock character in place and prevent animation-driven roaming
+                currentModel.userData.targetPosition = new THREE.Vector3(posX, posY, posZ);
+                currentModel.position.copy(currentModel.userData.targetPosition);
+            } else {
+                // Secure fallback configuration if bounds calculation is empty
+                currentModel.scale.setScalar(1.0);
+                currentModel.userData.targetPosition = new THREE.Vector3(0, 0, 0);
+                currentModel.position.set(0, 0, 0);
+            }
+
+            // 5. Update materials and shadows
+            currentModel.traverse(child => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    if (child.material) {
+                        child.material.needsUpdate = true;
+                    }
+                }
+            });
+
+            // Force matrix update with scale & position before rendering
+            currentModel.updateMatrixWorld(true);
+            scene.add(currentModel);
+
+            // 6. Mixer & Play animations for all characters (including SWAT, Ninja, Gas Mask, and Alien Soldier)
+            if (object.animations && object.animations.length > 0) {
+                mixer = new THREE.AnimationMixer(currentModel);
+
+                // Select first clip or look for a specific idle clip if available
+                let clip = object.animations[0];
+                const idleClip = object.animations.find(a => a.name.toLowerCase().includes('idle') || a.name.toLowerCase().includes('pose'));
+                if (idleClip) clip = idleClip;
+
+                const action = mixer.clipAction(clip);
+                action.play();
+                currentAction = action; // Store action globally for loop control
+
+                console.log(`[Animation] Playing clip for ${charName}`);
+            } else {
+                mixer = null;
+                currentAction = null;
+                console.log(`[Animation] Steady static fallback for ${charName}`);
+            }
+
+            // 7. Reset camera controls target to chest height to maintain head-to-toe visibility
+            if (controls) {
+                controls.target.set(0, 1.1, 0);
+                controls.update();
+            }
+
+            return true;
         }
 
         function showFallback() {
             if (currentModel) scene.remove(currentModel);
             const geometry = new THREE.BoxGeometry(1.5, 3, 1.5);
-            const material = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.8, emissive: 0x00f2ff, emissiveIntensity: 0.2 });
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x111111,
+                roughness: 0.4,
+                metalness: 0.8,
+                emissive: 0x00f2ff,
+                emissiveIntensity: 0.2
+            });
             currentModel = new THREE.Mesh(geometry, material);
             currentModel.position.y = 1.5;
             scene.add(currentModel);
+            mixer = null;
         }
 
-        function animate() { requestAnimationFrame(animate); if (currentModel) currentModel.rotation.y += 0.01; renderer.render(scene, camera); }
+        // Smooth Auto-Rotation and Animation Mixer updates
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            if (mixer) mixer.update(delta);
+
+            if (controls) {
+                controls.update(); // Smoothly animate camera and apply damping physics
+            }
+
+
+            if (currentModel) {
+                // Force model to remain perfectly stationary at its mathematically centered target coordinate
+                if (currentModel.userData.targetPosition) {
+                    currentModel.position.copy(currentModel.userData.targetPosition);
+                }
+
+                currentModel.rotation.y += 0.008; // Smooth, slow horizontal spin on the character axis
+
+                // Strip root motion bone-level translations to keep running or moving actions perfectly centered on the platform
+                const hips = currentModel.getObjectByName("mixamorigHips") || currentModel.getObjectByName("Hips");
+                if (hips) {
+                    hips.position.x = 0;
+                    hips.position.z = 0;
+                }
+            }
+
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Dynamically renders the 4 character slots in the UI
+        function renderCharGrid() {
+            const grid = document.getElementById('char-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            // Check how many levels player has completed
+            const completedLevels = parseInt(localStorage.getItem('completedLevels') || '0');
+
+            charData.forEach((char, idx) => {
+                let isGated = false;
+                let isPurchased = true;
+
+                if (idx === 2) {
+                    // SwatGuy - locked until 3 levels passed
+                    isGated = completedLevels < 3;
+                    isPurchased = remyUnlocked;
+                } else if (idx === 3) {
+                    // SwordKnight - locked until 3 levels passed
+                    isGated = completedLevels < 3;
+                    isPurchased = hunterUnlocked;
+                }
+
+                const isSelected = idx === selectedCharIndex;
+                const box = document.createElement('div');
+                const isLocked = char.locked && (isGated || !isPurchased);
+
+                box.className = `char-portrait-box ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''} ${isGated && char.locked ? 'gated' : ''}`;
+                box.id = `p-${idx}`;
+
+                box.onclick = () => selectChar(idx);
+
+                box.innerHTML = `<img src="${char.img}" id="img-${idx}">`;
+                grid.appendChild(box);
+            });
+
+            // Add filler/locked boxes for layout symmetry
+            for (let i = charData.length; i < 9; i++) {
+                const soon = document.createElement('div');
+                soon.className = 'char-portrait-box coming-soon-box';
+                soon.innerHTML = `<span>?</span>LOCKED`;
+                grid.appendChild(soon);
+            }
+        }
+
+        // Map character names to display names
+        const charDisplayNames = {
+            'GASMASK': 'GAS MASK',
+            'ALIENSOLDIER': 'ALIEN SOLDIER',
+            'REMY': 'SWAT GUY',
+            'HUNTER': 'NINJA'
+        };
 
         function selectChar(index) {
             selectedCharIndex = index;
             const char = charData[index];
-            for (let i = 0; i < 3; i++) { const box = document.getElementById(`p-${i}`); if (box) box.classList.toggle('selected', i === index); }
-            document.getElementById('char-name').textContent = char.name;
-            document.getElementById('char-role').textContent = char.role;
+
+            renderCharGrid();
+
+            const displayName = charDisplayNames[char.name.toUpperCase()] || char.name;
+            document.getElementById('char-name').textContent = displayName;
+            document.getElementById('char-role').textContent = char.role.toUpperCase();
             document.getElementById('char-desc').textContent = char.desc;
             document.getElementById('stat-damage').style.width = char.stats.dmg + '%';
             document.getElementById('stat-speed').style.width = char.stats.spd + '%';
             document.getElementById('stat-accuracy').style.width = char.stats.acc + '%';
             document.getElementById('stat-armor').style.width = char.stats.arm + '%';
+
             const lockPanel = document.getElementById('lock-panel');
             const deployBtn = document.getElementById('deploy-btn');
-            const isLocked = char.locked && !medeaUnlocked;
-            if (isLocked) { lockPanel.classList.add('active'); deployBtn.disabled = true; deployBtn.textContent = "LOCKED"; }
-            else { lockPanel.classList.remove('active'); deployBtn.disabled = false; deployBtn.textContent = "SELECT"; }
+            const completedLevels = parseInt(localStorage.getItem('completedLevels') || '0');
+
+            let isLocked = false;
+            if (index === 2) {
+                isLocked = completedLevels < 3 || !remyUnlocked;
+            } else if (index === 3) {
+                isLocked = completedLevels < 3 || !hunterUnlocked;
+            }
+
+            if (isLocked) {
+                lockPanel.classList.add('active');
+                deployBtn.disabled = true;
+                deployBtn.textContent = "LOCKED";
+                const lockMsg = document.getElementById('lock-msg');
+                if (lockMsg) lockMsg.textContent = '🔒 COMPLETE 3 LEVELS TO UNLOCK THIS CHARACTER';
+            } else {
+                lockPanel.classList.remove('active');
+                deployBtn.disabled = false;
+                deployBtn.textContent = "SELECT";
+            }
+
+            if (ringMesh) ringMesh.visible = !isLocked;
+            if (stageMesh) stageMesh.visible = !isLocked;
+
+            const unlockBtn = document.querySelector('.unlock-btn-premium');
+            if (unlockBtn) unlockBtn.style.display = 'none';
+
             const avatarEl = document.getElementById('header-avatar');
-            if (avatarEl) { const colors = ['#0088ff', '#00f2ff', '#ffcc00']; avatarEl.style.border = `2px solid ${colors[index]}`; avatarEl.style.boxShadow = `0 0 12px ${colors[index]}`; }
-            if (char.blobUrl) loadModel(char.blobUrl, char.type);
-            else loadModel(char.model, char.type);
+            if (avatarEl) {
+                const colors = ['#39ff14', '#00f2ff', '#ff8c00', '#ff00ff'];
+                avatarEl.style.border = `2px solid ${colors[index] || '#fff'}`;
+                avatarEl.style.boxShadow = `0 0 12px ${colors[index] || '#fff'}`;
+            }
+
+            // Render cached model instantly or show loading
+            if (displayCachedModel(char.name)) {
+                const overlay = document.getElementById('model-loading-overlay');
+                if (overlay) overlay.style.display = 'none';
+            } else {
+                const overlay = document.getElementById('model-loading-overlay');
+                if (overlay) {
+                    overlay.style.display = 'block';
+                    overlay.textContent = `LOADING ${displayName}...`;
+                }
+
+                const loader = new THREE.FBXLoader();
+                loader.load(char.model, (baseObject) => {
+                    if (char.idleAnim) {
+                        loader.load(char.idleAnim, (animObject) => {
+                            if (animObject.animations && animObject.animations.length > 0) {
+                                baseObject.animations = [animObject.animations[0]];
+                            }
+                            modelCache[char.name] = baseObject;
+                            if (selectedCharIndex === index) {
+                                displayCachedModel(char.name);
+                                if (overlay) overlay.style.display = 'none';
+                            }
+                        }, undefined, (err) => {
+                            console.error("Direct anim load error:", err);
+                            modelCache[char.name] = baseObject;
+                            if (selectedCharIndex === index) {
+                                displayCachedModel(char.name);
+                                if (overlay) overlay.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        modelCache[char.name] = baseObject;
+                        if (selectedCharIndex === index) {
+                            displayCachedModel(char.name);
+                            if (overlay) overlay.style.display = 'none';
+                        }
+                    }
+                }, undefined, (err) => {
+                    console.error("Direct base load error:", err);
+                    if (selectedCharIndex === index) {
+                        showFallback();
+                        if (overlay) overlay.style.display = 'none';
+                    }
+                });
+            }
         }
 
-        async function unlockMedea() {
+        // Handles level-check and unlock call for the Alien Soldier (Index 3, maps to MEDEA in backend)
+        async function unlockAlienSoldier() {
+            if (lobbyData.user.level < 3) {
+                showNotification("LEVEL 3 REQUIRED TO UNLOCK ALIEN SOLDIER!", "error");
+                return;
+            }
+
+            // Client-side token balance check to prevent accidental API calls when balance is insufficient (e.g. balance is 10)
+            const balance = (lobbyData && lobbyData.user && lobbyData.user.skullTokens) || 0;
+            if (balance < 5000) {
+                showNotification(`INSUFFICIENT SKULL TOKENS! 5,000 SKULLS REQUIRED (BALANCE: ${balance})`, "error");
+                return;
+            }
+
             const username = lobbyData.user.name;
-            const char = charData[2];
-            
             try {
                 const res = await fetch('http://localhost:5100/api/character/unlock', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, characterName: char.name })
+                    body: JSON.stringify({ username, characterName: "MEDEA" })
                 });
-                
+
                 const data = await res.json();
                 if (res.ok) {
                     medeaUnlocked = true;
-                    showNotification("CHARACTER UNLOCKED!", 'success');
+                    showNotification("ALIEN SOLDIER UNLOCKED!", 'success');
                     await fetchCharacterData();
-                    selectChar(2);
+                    selectChar(3);
                 } else {
                     showNotification(data.message || "UNLOCK FAILED", 'error');
                 }
@@ -3083,13 +4503,63 @@
             }
         }
 
+        // Handles level-check and local storage unlock call for SWAT Guy (Index 0, database-safe!)
+        async function unlockRemy() {
+            if (lobbyData.user.level <= 3) {
+                showNotification("COMPLETION OF LEVEL 3 REQUIRED TO UNLOCK SWAT GUY!", "error");
+                return;
+            }
+
+            const balance = (lobbyData && lobbyData.user && lobbyData.user.skullTokens) || 0;
+            if (balance < 5000) {
+                showNotification(`INSUFFICIENT SKULL TOKENS! 5,000 SKULLS REQUIRED (BALANCE: ${balance})`, "error");
+                return;
+            }
+
+            // Deduct tokens locally to show immediate premium response without DB alterations!
+            lobbyData.user.skullTokens -= 5000;
+            localStorage.setItem('remyUnlocked', 'true');
+            remyUnlocked = true;
+            showNotification("SWAT GUY UNLOCKED!", 'success');
+            await fetchCharacterData();
+            selectChar(2); // REMY is now index 2
+        }
+
+        // Handles level-check and local storage unlock call for Ninja (Index 3, database-safe!)
+        async function unlockHunter() {
+            if (lobbyData.user.level <= 3) {
+                showNotification("COMPLETION OF LEVEL 3 REQUIRED TO UNLOCK NINJA!", "error");
+                return;
+            }
+
+            const balance = (lobbyData && lobbyData.user && lobbyData.user.skullTokens) || 0;
+            if (balance < 5000) {
+                showNotification(`INSUFFICIENT SKULL TOKENS! 5,000 SKULLS REQUIRED (BALANCE: ${balance})`, "error");
+                return;
+            }
+
+            // Deduct tokens locally to show immediate premium response without DB alterations!
+            lobbyData.user.skullTokens -= 5000;
+            localStorage.setItem('hunterUnlocked', 'true');
+            hunterUnlocked = true;
+            showNotification("NINJA UNLOCKED!", 'success');
+            await fetchCharacterData();
+            selectChar(3); // HUNTER is now index 3
+        }
+
         async function toggleCharacter(show) {
             const modal = document.getElementById('char-modal');
             modal.style.display = show ? 'block' : 'none';
             if (show) {
                 await fetchCharacterData();
-                if (!scene) { initThreeJS(); initCharacterModels(); }
-                setTimeout(() => selectChar(selectedCharIndex), 100);
+                if (!scene) {
+                    initThreeJS();
+                    preLoadModels();
+                }
+                setTimeout(() => {
+                    onWindowResize(); // Force container dimension refresh after DOM modal display is active
+                    selectChar(selectedCharIndex);
+                }, 150);
             }
         }
 
@@ -3100,18 +4570,18 @@
                 if (res.ok) {
                     const data = await res.json();
                     medeaUnlocked = data.isMedeaUnlocked;
-                    
+
                     const lockMsg = document.getElementById('lock-msg');
-                    if (lockMsg) lockMsg.textContent = `LOCKED: REACH LEVEL 3 + 5,000 SKULL TOKENS (BALANCE: ${data.skullTokens})`;
-                    
+                    if (lockMsg) lockMsg.textContent = `LOCKED: COMPLETE LEVEL 3 + 5,000 SKULL TOKENS (BALANCE: ${data.skullTokens})`;
+
+                    // Match database key with local index
                     const index = charData.findIndex(c => c.name.toUpperCase() === data.selectedCharacter.toUpperCase());
-                    if (index !== -1) selectedCharIndex = index;
-                    
-                    if (data.stats) {
-                        charData[selectedCharIndex].stats.dmg = data.stats.damage;
-                        charData[selectedCharIndex].stats.spd = data.stats.speed;
-                        charData[selectedCharIndex].stats.acc = data.stats.accuracy;
-                        charData[selectedCharIndex].stats.arm = data.stats.armor;
+                    const completedLevels = parseInt(localStorage.getItem('completedLevels') || '0');
+                    if (index !== -1) {
+                        selectedCharIndex = index;
+                        if (index === 2 && (!remyUnlocked || completedLevels < 3)) selectedCharIndex = 0;
+                        if (index === 3 && (!hunterUnlocked || completedLevels < 3)) selectedCharIndex = 0;
+                        activeCharName = charData[selectedCharIndex].name;
                     }
                 }
             } catch (err) {
@@ -3128,9 +4598,9 @@
             }
         });
 
-        async function toggleSettings(show) { 
+        async function toggleSettings(show) {
             const modal = document.getElementById('settings-modal');
-            modal.style.display = show ? 'flex' : 'none'; 
+            modal.style.display = show ? 'flex' : 'none';
             if (show) await fetchSettings();
         }
 
@@ -3146,12 +4616,19 @@
                     document.getElementById('set-graphics-quality').value = data.graphicsQuality;
                     document.getElementById('set-fullscreen').checked = data.fullscreenMode;
                     document.getElementById('set-render-scale').value = data.renderScale;
-                    
+
                     // Update value displays
                     document.querySelectorAll('#settings-modal .val-display').forEach(span => {
                         const slider = span.parentElement.parentElement.querySelector('input[type="range"]');
                         if (slider) span.textContent = slider.value + '%';
                     });
+
+                    // Update procedural audio volumes
+                    if (typeof gameAudio !== 'undefined') {
+                        gameAudio.setMasterVolume(data.masterVolume / 100);
+                        gameAudio.setMusicVolume(data.musicVolume / 100);
+                        gameAudio.setSfxVolume(data.sfxVolume / 100);
+                    }
                 }
             } catch (err) {
                 console.error("Settings fetch error:", err);
@@ -3164,13 +4641,26 @@
             event.currentTarget.classList.add('active'); document.getElementById(tabId).classList.add('active');
         }
 
-        function updateSliderVal(slider) { const display = slider.parentElement.querySelector('.val-display'); if (display) display.textContent = slider.value + '%'; }
+        function updateSliderVal(slider) { 
+            const display = slider.parentElement.querySelector('.val-display'); 
+            if (display) display.textContent = slider.value + '%'; 
+            const val = parseFloat(slider.value) / 100.0;
+            if (typeof gameAudio !== 'undefined') {
+                if (slider.id === 'set-master-vol') {
+                    gameAudio.setMasterVolume(val);
+                } else if (slider.id === 'set-music-vol') {
+                    gameAudio.setMusicVolume(val);
+                } else if (slider.id === 'set-sfx-vol') {
+                    gameAudio.setSfxVolume(val);
+                }
+            }
+        }
 
         async function applySettings(btn) {
             const span = btn.querySelector('span');
             const originalText = span.textContent;
             span.textContent = 'SAVING...';
-            
+
             const username = lobbyData.user.name;
             const settings = {
                 username,
@@ -3182,13 +4672,19 @@
                 renderScale: parseInt(document.getElementById('set-render-scale').value)
             };
 
+            if (typeof gameAudio !== 'undefined') {
+                gameAudio.setMasterVolume(settings.masterVolume / 100);
+                gameAudio.setMusicVolume(settings.musicVolume / 100);
+                gameAudio.setSfxVolume(settings.sfxVolume / 100);
+            }
+
             try {
                 const res = await fetch('http://localhost:5100/api/settings/save', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(settings)
                 });
-                
+
                 if (res.ok) {
                     showNotification("SETTINGS SAVED");
                     setTimeout(() => toggleSettings(false), 500);
@@ -3201,12 +4697,291 @@
                 setTimeout(() => { span.textContent = originalText; }, 500);
             }
         }
+
+        class ProceduralAudio {
+            constructor() {
+                this.ctx = null;
+                this.masterVolumeNode = null;
+                this.musicVolumeNode = null;
+                this.sfxVolumeNode = null;
+                this.droneOscs = [];
+                this.droneGains = [];
+                this.isMusicPlaying = false;
+                this.masterVolume = 0.8;
+                this.musicVolume = 0.6;
+                this.sfxVolume = 0.9;
+            }
+            init() {
+                if (this.ctx) return;
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AudioContext();
+                this.masterVolumeNode = this.ctx.createGain();
+                this.masterVolumeNode.gain.setValueAtTime(this.masterVolume, this.ctx.currentTime);
+                this.masterVolumeNode.connect(this.ctx.destination);
+                this.musicVolumeNode = this.ctx.createGain();
+                this.musicVolumeNode.gain.setValueAtTime(this.musicVolume, this.ctx.currentTime);
+                this.musicVolumeNode.connect(this.masterVolumeNode);
+                this.sfxVolumeNode = this.ctx.createGain();
+                this.sfxVolumeNode.gain.setValueAtTime(this.sfxVolume, this.ctx.currentTime);
+                this.sfxVolumeNode.connect(this.masterVolumeNode);
+            }
+            setMasterVolume(vol) {
+                this.masterVolume = Math.max(0, Math.min(1, vol));
+                if (this.masterVolumeNode && this.ctx) {
+                    this.masterVolumeNode.gain.setTargetAtTime(this.masterVolume, this.ctx.currentTime, 0.1);
+                }
+            }
+            setMusicVolume(vol) {
+                this.musicVolume = Math.max(0, Math.min(1, vol));
+                if (this.musicVolumeNode && this.ctx) {
+                    this.musicVolumeNode.gain.setTargetAtTime(this.musicVolume, this.ctx.currentTime, 0.1);
+                }
+            }
+            setSfxVolume(vol) {
+                this.sfxVolume = Math.max(0, Math.min(1, vol));
+                if (this.sfxVolumeNode && this.ctx) {
+                    this.sfxVolumeNode.gain.setTargetAtTime(this.sfxVolume, this.ctx.currentTime, 0.1);
+                }
+            }
+            playClick(type = 'default') {
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const now = this.ctx.currentTime;
+
+                if (type === 'typing') {
+                    // Very light, quiet typewriter/tap sound
+                    const duration = 0.008;
+                    const bufferSize = this.ctx.sampleRate * duration;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                    }
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'highpass';
+                    filter.frequency.setValueAtTime(3000, now);
+
+                    const gainNode = this.ctx.createGain();
+                    // Extremely light volume for typing
+                    gainNode.gain.setValueAtTime(this.masterVolume * this.sfxVolume * 0.04, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+                    noise.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(this.sfxVolumeNode);
+                    noise.start(now);
+                    return;
+                }
+
+                if (type === 'special') {
+                    // Premium futuristic UI chime for Settings & Profile Icon
+                    const osc1 = this.ctx.createOscillator();
+                    const osc2 = this.ctx.createOscillator();
+                    const gainNode = this.ctx.createGain();
+
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(987.77, now); // B5 chime
+                    osc1.frequency.exponentialRampToValueAtTime(1318.51, now + 0.1); // E6 slide
+
+                    osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(1318.51, now);
+                    osc2.frequency.exponentialRampToValueAtTime(1975.53, now + 0.08); // B6 slide
+
+                    gainNode.gain.setValueAtTime(this.masterVolume * this.sfxVolume * 0.12, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+
+                    osc1.connect(gainNode);
+                    osc2.connect(gainNode);
+                    gainNode.connect(this.sfxVolumeNode);
+
+                    osc1.start(now);
+                    osc2.start(now);
+                    osc1.stop(now + 0.2);
+                    osc2.stop(now + 0.2);
+                    return;
+                }
+
+                // Default standard click: crisp, punchy, immediate mechanical click
+                const bufferSize = this.ctx.sampleRate * 0.012;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                }
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(2200, now);
+
+                const gainNode = this.ctx.createGain();
+                gainNode.gain.setValueAtTime(this.masterVolume * this.sfxVolume * 0.25, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
+
+                noise.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(this.sfxVolumeNode);
+                noise.start(now);
+
+                // Quick sine drop for click body click
+                const osc = this.ctx.createOscillator();
+                const oscGain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.008);
+                oscGain.gain.setValueAtTime(this.masterVolume * this.sfxVolume * 0.2, now);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.008);
+
+                osc.connect(oscGain);
+                oscGain.connect(this.sfxVolumeNode);
+                osc.start(now);
+                osc.stop(now + 0.01);
+            }
+            playZombieGroan() {
+                try {
+                    const audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/f/f3/Zombie_moan.ogg');
+                    audio.volume = this.masterVolume * this.sfxVolume * 0.6;
+                    audio.play().catch(e => console.log("Zombie groan autoplay blocked or failed:", e));
+                } catch (e) {
+                    console.error("Zombie sound play error:", e);
+                }
+            }
+            startZombieAmbient() {
+                if (this.isMusicPlaying) return;
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                this.isMusicPlaying = true;
+                const now = this.ctx.currentTime;
+                const frequencies = [32.7, 49.0, 65.4, 77.8];
+                frequencies.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gainNode = this.ctx.createGain();
+                    const lfo = this.ctx.createOscillator();
+                    const lfoGain = this.ctx.createGain();
+                    osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.detune.setValueAtTime((Math.random() - 0.5) * 15, now);
+                    lfo.frequency.setValueAtTime(0.05 + Math.random() * 0.08, now);
+                    lfoGain.gain.setValueAtTime(0.05, now);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(gainNode.gain);
+                    gainNode.gain.setValueAtTime(0.08, now);
+                    osc.connect(gainNode);
+                    gainNode.connect(this.musicVolumeNode);
+                    lfo.start(now);
+                    osc.start(now);
+                    this.droneOscs.push(osc, lfo);
+                    this.droneGains.push(gainNode);
+                });
+                const noiseBufferSize = this.ctx.sampleRate * 2;
+                const noiseBuffer = this.ctx.createBuffer(1, noiseBufferSize, this.ctx.sampleRate);
+                const noiseData = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < noiseBufferSize; i++) {
+                    noiseData[i] = Math.random() * 2 - 1;
+                }
+                const windSource = this.ctx.createBufferSource();
+                windSource.buffer = noiseBuffer;
+                windSource.loop = true;
+                const windFilter = this.ctx.createBiquadFilter();
+                windFilter.type = 'bandpass';
+                windFilter.frequency.setValueAtTime(250, now);
+                windFilter.Q.setValueAtTime(4, now);
+                const windLfo = this.ctx.createOscillator();
+                windLfo.frequency.setValueAtTime(0.08, now);
+                const windLfoGain = this.ctx.createGain();
+                windLfoGain.gain.setValueAtTime(150, now);
+                windLfo.connect(windLfoGain);
+                windLfoGain.connect(windFilter.frequency);
+                const windGain = this.ctx.createGain();
+                windGain.gain.setValueAtTime(0.03, now);
+                windSource.connect(windFilter);
+                windFilter.connect(windGain);
+                windGain.connect(this.musicVolumeNode);
+                windLfo.start(now);
+                windSource.start(now);
+                this.droneOscs.push(windSource, windLfo);
+
+                const playCreepyChime = () => {
+                    if (!this.isMusicPlaying) return;
+                    const chimeNow = this.ctx.currentTime;
+                    const chimeOsc = this.ctx.createOscillator();
+                    const chimeGain = this.ctx.createGain();
+                    const delay = this.ctx.createDelay();
+                    const delayGain = this.ctx.createGain();
+                    chimeOsc.type = 'sine';
+                    const chimes = [261.6, 311.1, 370.0, 392.0, 523.3, 622.3, 740.0, 784.0];
+                    const randomFreq = chimes[Math.floor(Math.random() * chimes.length)];
+                    chimeOsc.frequency.setValueAtTime(randomFreq, chimeNow);
+                    chimeGain.gain.setValueAtTime(0.05, chimeNow);
+                    chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeNow + 3.0);
+                    delay.delayTime.setValueAtTime(0.4, chimeNow);
+                    delayGain.gain.setValueAtTime(0.4, chimeNow);
+                    chimeOsc.connect(chimeGain);
+                    chimeGain.connect(this.musicVolumeNode);
+                    chimeGain.connect(delay);
+                    delay.connect(delayGain);
+                    delayGain.connect(delay);
+                    delayGain.connect(this.musicVolumeNode);
+                    chimeOsc.start(chimeNow);
+                    chimeOsc.stop(chimeNow + 3.2);
+                    setTimeout(playCreepyChime, 6000 + Math.random() * 6000);
+                };
+                setTimeout(playCreepyChime, 4000);
+
+                const playRandomZombieGroan = () => {
+                    if (!this.isMusicPlaying) return;
+                    this.playZombieGroan();
+                    setTimeout(playRandomZombieGroan, 18000 + Math.random() * 18000);
+                };
+                setTimeout(playRandomZombieGroan, 15000);
+            }
+        }
+        const gameAudio = new ProceduralAudio();
+
+        // Zero-delay mousedown trigger for buttons and inputs
+        document.addEventListener('mousedown', (e) => {
+            const isClickable = e.target.closest('button, .menu-btn, .close-btn, .tab-btn, .shop-tab, .slot, .char-portrait-box, .nav-item, .ctrl-item, .view-more-btn, .close-shop, .back-lobby-btn, input[type="submit"], [onclick]');
+            if (isClickable) {
+                // Settings, Profile icons and avatar clicks trigger a special futuristic electronic chime
+                const isSpecial = e.target.closest('.ctrl-item') || e.target.closest('.p-icon') || e.target.closest('#lobby-back-btn') || e.target.closest('.close-btn') || e.target.closest('.settings-btn');
+                if (isSpecial) {
+                    gameAudio.playClick('special');
+                } else {
+                    gameAudio.playClick('default');
+                }
+            }
+        });
+
+        // Soft typewriter tap sound for input typing
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                gameAudio.playClick('typing');
+            }
+        });
+
+        const startAudio = () => {
+            gameAudio.init();
+            gameAudio.startZombieAmbient();
+            gameAudio.playZombieGroan();
+            document.removeEventListener('click', startAudio);
+            document.removeEventListener('keydown', startAudio);
+        };
+        document.addEventListener('click', startAudio);
+        document.addEventListener('keydown', startAudio);
+
         function logoutUser() {
             localStorage.removeItem('loggedInUser');
             window.location.href = 'index.html';
         }
-        window.addEventListener('click', (event) => { if (event.target == document.getElementById('settings-modal')) toggleSettings(false); });
-        
+        window.addEventListener('click', (event) => { 
+            if (event.target == document.getElementById('settings-modal')) toggleSettings(false); 
+            if (event.target == document.getElementById('daily-reward-modal')) toggleDailyRewardModal(false);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             initData();
 
@@ -3218,7 +4993,44 @@
                     window.location.href = 'index.html';
                 });
             }
+
+            // Start button click listener to launch Level 1
+            const startBtn = document.querySelector('.start-btn');
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    const currentMap = localStorage.getItem('selectedMap') || "Training Camp";
+                    if (currentMap.toUpperCase() === "TRAINING CAMP") {
+                        // Force sync selected character to local storage
+                        const selectedChar = activeCharName;
+                        localStorage.setItem('selectedCharacter', selectedChar);
+                        localStorage.setItem('activeCharacter', selectedChar);
+                        localStorage.setItem('selectedRole', selectedChar);
+                        localStorage.setItem('role', selectedChar);
+
+                        // Find the equipped weapon from weapons list
+                        const eqId = lobbyData.user.equippedWeaponId;
+                        const equippedWep = (typeof weapons !== 'undefined') ? weapons.find(w => w.id === eqId) : null;
+                        if (equippedWep) {
+                            localStorage.setItem('selectedWeapon', equippedWep.name);
+                        } else {
+                            if (typeof weapons !== 'undefined' && weapons.length > 0) {
+                                localStorage.setItem('selectedWeapon', weapons[0].name);
+                            } else {
+                                localStorage.setItem('selectedWeapon', 'AK-47 STEEL');
+                            }
+                        }
+
+                        showNotification("LAUNCHING TRAINING CAMP...", "success");
+                        setTimeout(() => {
+                            window.location.href = 'level1.html';
+                        }, 800);
+                    } else {
+                        showNotification("LEVEL NOT YET DEPLOYED!", "error");
+                    }
+                });
+            }
         });
     </script>
 </body>
+
 </html>

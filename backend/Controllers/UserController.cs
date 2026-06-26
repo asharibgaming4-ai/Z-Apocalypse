@@ -22,6 +22,8 @@ public class UserController : ControllerBase
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null) return NotFound(new { message = "User not found" });
 
+        await EnsureFirstGunOwnedAndEquipped(user);
+
         return Ok(new { 
             username = user.Username, 
             coins = user.Coins, 
@@ -38,6 +40,8 @@ public class UserController : ControllerBase
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null) return NotFound(new { message = "User not found" });
 
+        await EnsureFirstGunOwnedAndEquipped(user);
+
         var inventoryItemIds = await _context.UserInventories
             .Where(ui => ui.UserId == user.Id)
             .Select(ui => ui.ItemId)
@@ -48,6 +52,34 @@ public class UserController : ControllerBase
             .ToListAsync();
 
         return Ok(items);
+    }
+
+    private async Task EnsureFirstGunOwnedAndEquipped(User user)
+    {
+        var firstGun = await _context.Items.FirstOrDefaultAsync(i => i.Name == "AK-47 STEEL");
+        if (firstGun != null)
+        {
+            var ownsFirstGun = await _context.UserInventories
+                .AnyAsync(ui => ui.UserId == user.Id && ui.ItemId == firstGun.Id);
+            
+            bool changed = false;
+            if (!ownsFirstGun)
+            {
+                _context.UserInventories.Add(new UserInventory { UserId = user.Id, ItemId = firstGun.Id });
+                changed = true;
+            }
+
+            if (user.EquippedWeaponId == null || user.EquippedWeaponId == 0)
+            {
+                user.EquippedWeaponId = firstGun.Id;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 
     [HttpPost("equip")]
@@ -61,10 +93,28 @@ public class UserController : ControllerBase
 
         return Ok(new { message = "EQUIPPED SUCCESSFUL", equippedWeaponId = user.EquippedWeaponId });
     }
+
+    [HttpPost("add-coins")]
+    public async Task<IActionResult> AddCoins([FromBody] AddCoinsRequest request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+        if (user == null) return NotFound(new { message = "User not found" });
+
+        user.Coins += request.Coins;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Coins updated successfully", coins = user.Coins });
+    }
 }
 
 public class EquipRequest
 {
     public string Username { get; set; }
     public int ItemId { get; set; }
+}
+
+public class AddCoinsRequest
+{
+    public string Username { get; set; }
+    public int Coins { get; set; }
 }

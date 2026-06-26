@@ -21,7 +21,15 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseDefaultFiles();
-app.UseStaticFiles();
+var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+provider.Mappings[".fbx"] = "application/octet-stream";
+provider.Mappings[".glb"] = "model/gltf-binary";
+provider.Mappings[".gltf"] = "model/gltf+json";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 
 // Seed the database
 using (var scope = app.Services.CreateScope())

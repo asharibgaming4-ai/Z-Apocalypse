@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Z-Apocalypse")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b7f0e63f7049a2a7f1d68bd88cddb5870b7b8af")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db800cf3d426d3483b2e04c2223f6f44190186b6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Z-Apocalypse")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Z-Apocalypse")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
